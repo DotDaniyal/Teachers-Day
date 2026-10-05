@@ -6,6 +6,7 @@ import { sounds } from '../utils/audio';
 import { processImageFile } from '../utils/imageUpload';
 
 const PRESET_PHOTOS = [
+  { label: 'Sir Zuhaib', url: '/src/assets/images/teacher_portrait_zuhaib_1791170048296.jpg' },
   { label: 'Portrait 1', url: '/src/assets/images/teacher_portrait_ahmed_1791166057857.jpg' },
   { label: 'Portrait 2', url: '/src/assets/images/teacher_portrait_sarah_1791166076570.jpg' },
   { label: 'Portrait 3', url: '/src/assets/images/teacher_portrait_chen_1791166090446.jpg' },

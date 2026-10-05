@@ -29,11 +29,21 @@ import { TeacherCustomizerDrawer } from './components/TeacherCustomizerDrawer';
 import { EasterEggModal } from './components/EasterEggModal';
 
 export default function App() {
-  // 1. Central editable teachers config
+  // 1. Central editable teachers config (ensuring Sir Zuhaib is permanently included)
   const [teachers, setTeachers] = useState<Teacher[]>(() => {
     try {
       const saved = localStorage.getItem('tribute_teachers_list');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed: Teacher[] = JSON.parse(saved);
+        const hasZuhaib = parsed.some((t) => t.id === 'zuhaib' || t.name.toLowerCase().includes('zuhaib'));
+        if (!hasZuhaib) {
+          const merged = [INITIAL_TEACHERS[0], ...parsed];
+          localStorage.setItem('tribute_teachers_list', JSON.stringify(merged));
+          localStorage.setItem('tribute_active_teacher_id', 'zuhaib');
+          return merged;
+        }
+        return parsed;
+      }
     } catch {
       // ignore
     }
@@ -48,7 +58,7 @@ export default function App() {
     } catch {
       // ignore
     }
-    return INITIAL_TEACHERS[0].id;
+    return 'zuhaib';
   });
 
   // 3. Customization settings
@@ -72,7 +82,15 @@ export default function App() {
   const [tributes, setTributes] = useState<TributeMessage[]>(() => {
     try {
       const saved = localStorage.getItem('tribute_messages');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed: TributeMessage[] = JSON.parse(saved);
+        if (!parsed.some((t) => t.id === 't-0')) {
+          const merged = [INITIAL_TRIBUTES[0], ...parsed];
+          localStorage.setItem('tribute_messages', JSON.stringify(merged));
+          return merged;
+        }
+        return parsed;
+      }
     } catch {
       // ignore
     }

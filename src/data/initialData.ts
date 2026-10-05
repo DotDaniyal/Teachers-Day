@@ -2,6 +2,21 @@ import { Teacher, TributeMessage } from '../types';
 
 export const INITIAL_TEACHERS: Teacher[] = [
   {
+    id: 'zuhaib',
+    name: 'Sir Zuhaib',
+    subject: 'TEACHER OF AI',
+    photo: '/src/assets/images/teacher_portrait_zuhaib_1791170048296.jpg',
+    quote: 'Thank you for opening our minds to the world of Artificial Intelligence and teaching us how to build the future.',
+    message: 'AI is not about replacing human creativity—it is about amplifying your vision to solve the hardest problems in the world.',
+    specialty: 'Artificial Intelligence & Intelligent Systems',
+    stats: [
+      { label: 'Models & Prompts Guided', value: '50k+' },
+      { label: 'AI Concepts Simplified', value: '1,500+' },
+      { label: 'Future Innovators Mentored', value: '500+' },
+      { label: 'Vision & Patience', value: 'Infinite ∞' },
+    ],
+  },
+  {
     id: 'ahmed',
     name: 'Sir Ahmed',
     subject: 'Web Development & Modern Frontend',
@@ -49,6 +64,16 @@ export const INITIAL_TEACHERS: Teacher[] = [
 ];
 
 export const INITIAL_TRIBUTES: TributeMessage[] = [
+  {
+    id: 't-0',
+    teacherId: 'zuhaib',
+    authorName: 'AI & Web Dev Batch of 2026',
+    message: 'Sir Zuhaib, thank you for demystifying Artificial Intelligence and showing us how to harness AI with confidence, curiosity, and real-world engineering skill!',
+    category: 'gratitude',
+    createdAt: 'Today',
+    likes: 64,
+    avatarSeed: 'Z',
+  },
   {
     id: 't-1',
     teacherId: 'ahmed',
