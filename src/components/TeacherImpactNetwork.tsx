@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Network, Sparkles, BookOpen, ShieldCheck, Compass, Rocket, UserCheck } from 'lucide-react';
+import { Network, BookOpen, ShieldCheck, Compass, Rocket, UserCheck } from 'lucide-react';
 import { Teacher } from '../types';
 import { sounds } from '../utils/audio';
 
@@ -10,7 +10,7 @@ interface TeacherImpactNetworkProps {
 
 export const TeacherImpactNetwork: React.FC<TeacherImpactNetworkProps> = ({ currentTeacher }) => {
   const [activeStageIdx, setActiveStageIdx] = useState<number>(0);
-  const [activeNode, setActiveNode] = useState<string | null>('AI & ML Engineers');
+  const [activeNode, setActiveNode] = useState<string>('AI & ML Engineers');
 
   const impactPipeline = [
     {
@@ -57,8 +57,8 @@ export const TeacherImpactNetwork: React.FC<TeacherImpactNetworkProps> = ({ curr
       count: '180+ Alumni',
       desc: 'Building intelligent systems, neural architectures, and modern AI applications.',
       color: '#38bdf8',
-      x: 180,
-      y: 100,
+      x: 200,
+      y: 95,
     },
     {
       id: 'Full-Stack Developers',
@@ -66,8 +66,8 @@ export const TeacherImpactNetwork: React.FC<TeacherImpactNetworkProps> = ({ curr
       count: '140+ Alumni',
       desc: 'Architecting scalable APIs, cloud databases, and high-performance server logic.',
       color: '#818cf8',
-      x: 620,
-      y: 90,
+      x: 600,
+      y: 95,
     },
     {
       id: 'UI/UX Architects',
@@ -75,8 +75,8 @@ export const TeacherImpactNetwork: React.FC<TeacherImpactNetworkProps> = ({ curr
       count: '95+ Alumni',
       desc: 'Crafting intuitive user journeys, motion prototypes, and human-centric design.',
       color: '#f43f5e',
-      x: 130,
-      y: 320,
+      x: 185,
+      y: 315,
     },
     {
       id: 'Tech Startup Founders',
@@ -84,8 +84,8 @@ export const TeacherImpactNetwork: React.FC<TeacherImpactNetworkProps> = ({ curr
       count: '25+ Startups',
       desc: 'Transforming ideas seeded during class hackathons into venture-backed companies.',
       color: '#fbbf24',
-      x: 670,
-      y: 310,
+      x: 615,
+      y: 315,
     },
     {
       id: 'Open-Source Creators',
@@ -94,13 +94,15 @@ export const TeacherImpactNetwork: React.FC<TeacherImpactNetworkProps> = ({ curr
       desc: 'Contributing back to global dev libraries, frameworks, and developer tooling.',
       color: '#34d399',
       x: 400,
-      y: 370,
+      y: 375,
     },
   ];
 
+  const selectedNodeObj = nodes.find((n) => n.id === activeNode) || nodes[0];
+
   return (
-    <section id="impact" className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div className="text-center max-w-3xl mx-auto mb-16">
+    <section id="impact" className="relative py-20 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-16">
         <div className="flex items-center justify-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-cyan-400 mb-3">
           <Network className="h-3.5 w-3.5" />
           <span>The Ripple Effect of Mentorship</span>
@@ -108,15 +110,15 @@ export const TeacherImpactNetwork: React.FC<TeacherImpactNetworkProps> = ({ curr
         <h2 className="text-3xl sm:text-5xl font-extrabold font-display text-white tracking-tight text-balance mb-4">
           The Impact of a Teacher
         </h2>
-        <p className="text-base sm:text-lg text-slate-300">
+        <p className="text-sm sm:text-lg text-slate-300">
           Trace the luminous path from {currentTeacher.name}&apos;s guidance to the future we build.
         </p>
       </div>
 
       {/* Part 1: Animated Glowing Path (TEACHER -> KNOWLEDGE -> CONFIDENCE -> DREAMS -> FUTURE) */}
-      <div className="max-w-4xl mx-auto mb-20 relative">
+      <div className="max-w-4xl mx-auto mb-16 sm:mb-20 relative">
         {/* Vertical Glowing Line with Animated Traveling Particles */}
-        <div className="absolute left-6 sm:left-1/2 top-6 bottom-6 w-0.5 -translate-x-1/2 bg-slate-800 overflow-hidden pointer-events-none">
+        <div className="absolute left-5 sm:left-1/2 top-6 bottom-6 w-0.5 -translate-x-1/2 bg-slate-800 overflow-hidden pointer-events-none">
           <motion.div
             animate={{ y: ['-100%', '200%'] }}
             transition={{ duration: 3.5, repeat: Infinity, ease: 'linear' }}
@@ -124,7 +126,7 @@ export const TeacherImpactNetwork: React.FC<TeacherImpactNetworkProps> = ({ curr
           />
         </div>
 
-        <div className="space-y-6 relative z-10">
+        <div className="space-y-5 sm:space-y-6 relative z-10">
           {impactPipeline.map((item, idx) => {
             const Icon = item.icon;
             const isSelected = activeStageIdx === idx;
@@ -141,20 +143,20 @@ export const TeacherImpactNetwork: React.FC<TeacherImpactNetworkProps> = ({ curr
                   sounds.playClick();
                   setActiveStageIdx(idx);
                 }}
-                className={`relative flex items-center gap-6 cursor-pointer ${
+                className={`relative flex items-center gap-4 sm:gap-6 cursor-pointer ${
                   isEven ? 'sm:flex-row' : 'sm:flex-row-reverse'
                 }`}
               >
                 {/* Card Side */}
-                <div className={`flex-1 pl-14 sm:pl-0 ${isEven ? 'sm:text-right' : 'sm:text-left'}`}>
+                <div className={`flex-1 pl-12 sm:pl-0 ${isEven ? 'sm:text-right' : 'sm:text-left'}`}>
                   <div
-                    className={`inline-block w-full sm:max-w-md rounded-2xl border p-5 text-left transition-all ${
+                    className={`inline-block w-full sm:max-w-md rounded-2xl border p-4 sm:p-5 text-left transition-all ${
                       isSelected
-                        ? 'border-cyan-400 bg-slate-900/95 shadow-[0_0_25px_rgba(56,189,248,0.2)] scale-[1.02]'
+                        ? 'border-cyan-400 bg-slate-900/95 shadow-[0_0_25px_rgba(56,189,248,0.2)]'
                         : 'border-slate-800 bg-slate-900/60 hover:border-slate-700'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex flex-wrap items-center justify-between gap-1 mb-1.5">
                       <span className="text-xs font-mono font-bold tracking-wider text-cyan-400">
                         0{idx + 1} · {item.stage}
                       </span>
@@ -167,10 +169,10 @@ export const TeacherImpactNetwork: React.FC<TeacherImpactNetworkProps> = ({ curr
                 </div>
 
                 {/* Center Glowing Node on Path */}
-                <div className="absolute left-6 sm:static sm:left-auto -translate-x-1/2 sm:translate-x-0 flex items-center justify-center shrink-0">
+                <div className="absolute left-5 sm:static sm:left-auto -translate-x-1/2 sm:translate-x-0 flex items-center justify-center shrink-0">
                   <div
-                    className={`h-11 w-11 rounded-full bg-gradient-to-tr ${item.color} p-0.5 shadow-[0_0_20px_rgba(56,189,248,0.35)] transition-transform ${
-                      isSelected ? 'scale-115' : 'scale-100'
+                    className={`h-10 w-10 sm:h-11 sm:w-11 rounded-full bg-gradient-to-tr ${item.color} p-0.5 shadow-[0_0_20px_rgba(56,189,248,0.35)] transition-transform ${
+                      isSelected ? 'scale-110' : 'scale-100'
                     }`}
                   >
                     <div className="h-full w-full rounded-full bg-slate-950 flex items-center justify-center text-white">
@@ -187,21 +189,79 @@ export const TeacherImpactNetwork: React.FC<TeacherImpactNetworkProps> = ({ curr
         </div>
       </div>
 
-      {/* Part 2: Interactive Alumni Constellation */}
-      <div className="relative rounded-3xl border border-slate-800 bg-slate-950/80 p-6 sm:p-10 shadow-2xl backdrop-blur-xl max-w-5xl mx-auto overflow-hidden">
+      {/* Part 2: Interactive Alumni Constellation (Responsive Mobile + Desktop) */}
+      <div className="relative rounded-3xl border border-slate-800 bg-slate-950/80 p-5 sm:p-10 shadow-2xl backdrop-blur-xl max-w-5xl mx-auto overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
 
-        <div className="relative z-10 text-center mb-4">
+        <div className="relative z-10 text-center mb-6">
           <h3 className="text-lg sm:text-xl font-bold font-display text-white">
             Interactive Mentorship Constellation
           </h3>
-          <p className="text-xs text-slate-400">
-            Click or hover any node to inspect how {currentTeacher.name}&apos;s lessons branch out across careers
+          <p className="text-xs text-slate-400 mt-1">
+            Tap or hover any node to inspect how {currentTeacher.name}&apos;s lessons branch out across careers
           </p>
         </div>
 
-        {/* SVG Network Lines */}
-        <div className="relative w-full h-[380px] sm:h-[420px] flex items-center justify-center">
+        {/* MOBILE & SMALL SCREEN LAYOUT (< 768px): Clean Connected Hub + Grid */}
+        <div className="md:hidden relative z-10 flex flex-col items-center mb-6">
+          {/* Center Teacher Hub */}
+          <div className="flex flex-col items-center">
+            <div className="p-1 rounded-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-rose-500 shadow-[0_0_25px_rgba(56,189,248,0.35)]">
+              <div className="h-16 w-16 rounded-full overflow-hidden border-2 border-slate-950 bg-slate-900">
+                <img
+                  src={currentTeacher.photo}
+                  alt={currentTeacher.name}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+            <span className="font-bold text-sm text-white mt-2">{currentTeacher.name}</span>
+            <span className="text-[11px] font-mono text-cyan-400 font-semibold">
+              {currentTeacher.subject}
+            </span>
+          </div>
+
+          {/* Glowing Vertical Connector Stem */}
+          <div className="w-0.5 h-6 bg-gradient-to-b from-cyan-400 to-indigo-500 my-2" />
+
+          {/* Responsive Grid of Alumni Nodes */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full">
+            {nodes.map((node) => {
+              const isSelected = activeNode === node.id;
+              return (
+                <button
+                  key={node.id}
+                  type="button"
+                  onClick={() => {
+                    sounds.playClick();
+                    setActiveNode(node.id);
+                  }}
+                  className={`flex items-center justify-between p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                    isSelected
+                      ? 'border-cyan-400 bg-slate-900 shadow-[0_0_20px_rgba(56,189,248,0.25)]'
+                      : 'border-slate-800 bg-slate-900/60 hover:border-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span
+                      className="h-3 w-3 rounded-full shrink-0"
+                      style={{ backgroundColor: node.color }}
+                    />
+                    <span className="text-xs font-bold text-white truncate">
+                      {node.role}
+                    </span>
+                  </div>
+                  <span className="text-[11px] font-mono text-cyan-300 shrink-0 ml-2">
+                    {node.count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* DESKTOP & TABLET RADIAL SVG CONSTELLATION (md: and up) */}
+        <div className="hidden md:flex relative w-full h-[420px] items-center justify-center">
           <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 800 440">
             {nodes.map((node) => {
               const isActive = activeNode === node.id;
@@ -234,7 +294,7 @@ export const TeacherImpactNetwork: React.FC<TeacherImpactNetworkProps> = ({ curr
           {/* Center Teacher Node */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center">
             <div className="relative group p-1 rounded-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-rose-500 shadow-[0_0_35px_rgba(56,189,248,0.4)]">
-              <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden border-2 border-slate-950 bg-slate-900">
+              <div className="h-20 w-20 rounded-full overflow-hidden border-2 border-slate-950 bg-slate-900">
                 <img
                   src={currentTeacher.photo}
                   alt={currentTeacher.name}
@@ -243,7 +303,7 @@ export const TeacherImpactNetwork: React.FC<TeacherImpactNetworkProps> = ({ curr
               </div>
             </div>
             <div className="mt-2 text-center">
-              <span className="font-bold text-sm sm:text-base text-white block">
+              <span className="font-bold text-base text-white block">
                 {currentTeacher.name}
               </span>
               <span className="text-[11px] font-mono text-cyan-400 font-semibold">
@@ -270,7 +330,7 @@ export const TeacherImpactNetwork: React.FC<TeacherImpactNetworkProps> = ({ curr
                   setActiveNode(node.id);
                 }}
                 style={{ left: `${leftPct}%`, top: `${topPct}%` }}
-                className={`absolute -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center p-2.5 sm:p-3 rounded-2xl border transition-all cursor-pointer ${
+                className={`absolute -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center p-3 rounded-2xl border transition-all cursor-pointer ${
                   isSelected
                     ? 'border-cyan-400 bg-slate-900 shadow-[0_0_25px_rgba(56,189,248,0.35)] scale-105'
                     : 'border-slate-800 bg-slate-950/90 hover:border-slate-700 opacity-85 hover:opacity-100'
@@ -292,27 +352,25 @@ export const TeacherImpactNetwork: React.FC<TeacherImpactNetworkProps> = ({ curr
         </div>
 
         {/* Selected Node Details Box */}
-        {activeNode && (
-          <div className="mt-4 p-4 sm:p-5 rounded-2xl border border-slate-800 bg-slate-900/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-left">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-mono font-bold text-cyan-400">
-                  {nodes.find((n) => n.id === activeNode)?.count}
-                </span>
-                <span className="text-slate-600">·</span>
-                <h4 className="text-sm sm:text-base font-bold text-white">
-                  {activeNode}
-                </h4>
-              </div>
-              <p className="text-xs sm:text-sm text-slate-300">
-                {nodes.find((n) => n.id === activeNode)?.desc}
-              </p>
+        <div className="relative z-10 mt-2 sm:mt-4 p-4 sm:p-5 rounded-2xl border border-slate-800 bg-slate-900/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-left">
+          <div>
+            <div className="flex flex-wrap items-center gap-2 mb-1">
+              <span className="text-xs font-mono font-bold text-cyan-400">
+                {selectedNodeObj.count}
+              </span>
+              <span className="text-slate-600">·</span>
+              <h4 className="text-sm sm:text-base font-bold text-white">
+                {selectedNodeObj.role}
+              </h4>
             </div>
-            <span className="text-xs font-mono text-slate-300 shrink-0">
-              Direct Mentorship Impact ✓
-            </span>
+            <p className="text-xs sm:text-sm text-slate-300">
+              {selectedNodeObj.desc}
+            </p>
           </div>
-        )}
+          <span className="text-xs font-mono text-cyan-400 sm:text-slate-300 shrink-0">
+            Direct Mentorship Impact ✓
+          </span>
+        </div>
       </div>
     </section>
   );

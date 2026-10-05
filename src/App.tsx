@@ -316,7 +316,7 @@ export default function App() {
 
   return (
     <div
-      className={`relative min-h-screen transition-colors duration-300 selection:bg-cyan-500/30 selection:text-cyan-200 ${
+      className={`relative min-h-screen w-full max-w-[100vw] overflow-x-hidden transition-colors duration-300 selection:bg-cyan-500/30 selection:text-cyan-200 ${
         isLightMode ? 'theme-light bg-slate-50 text-slate-900' : 'bg-gray-950 text-slate-100'
       }`}
     >

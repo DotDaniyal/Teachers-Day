@@ -237,24 +237,24 @@ export const Hero: React.FC<HeroProps> = ({
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
-            className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight font-display text-white max-w-4xl text-balance leading-[1.08] mb-3"
+            className="text-3xl sm:text-6xl md:text-7xl font-extrabold tracking-tight font-display text-white max-w-4xl text-balance leading-[1.1] mb-3"
           >
             Happy Teacher&apos;s Day! 🎓
           </motion.h1>
 
           {/* Editorial Subtitle */}
-          <p className="text-base sm:text-xl text-slate-300 max-w-2xl text-balance mb-7 leading-relaxed">
+          <p className="text-sm sm:text-xl text-slate-300 max-w-2xl text-balance mb-7 leading-relaxed px-1">
             A tribute to the people who guide us, inspire us and help shape our future.
           </p>
 
           {/* Primary Hero Actions ("Celebrate", "Create a Tribute", "Explore the Story") */}
-          <div className="flex flex-wrap items-center justify-center gap-3.5 mb-10">
+          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-center gap-3 w-full max-w-md sm:max-w-none mb-10">
             <button
               type="button"
               onClick={handleCelebrateClick}
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 px-6 py-3.5 font-bold text-white shadow-[0_0_25px_rgba(244,63,94,0.3)] hover:brightness-110 active:scale-95 transition-all whitespace-nowrap cursor-pointer"
             >
-              <PartyPopper className="h-4 w-4" />
+              <PartyPopper className="h-4 w-4 shrink-0" />
               <span>Celebrate! 🎉</span>
             </button>
 
@@ -266,7 +266,7 @@ export const Hero: React.FC<HeroProps> = ({
               }}
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-blue-600 px-6 py-3.5 font-semibold text-white shadow-[0_0_25px_rgba(56,189,248,0.25)] hover:brightness-110 active:scale-95 transition-all whitespace-nowrap cursor-pointer"
             >
-              <Sparkles className="h-4 w-4" />
+              <Sparkles className="h-4 w-4 shrink-0" />
               <span>Create a Tribute</span>
             </button>
 
@@ -276,7 +276,7 @@ export const Hero: React.FC<HeroProps> = ({
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900/80 px-6 py-3.5 font-semibold text-slate-200 hover:bg-slate-800 hover:border-slate-600 hover:text-white transition-all backdrop-blur-md whitespace-nowrap cursor-pointer"
             >
               <span>Explore the Story</span>
-              <ArrowDown className="h-4 w-4" />
+              <ArrowDown className="h-4 w-4 shrink-0" />
             </button>
           </div>
 
@@ -286,23 +286,23 @@ export const Hero: React.FC<HeroProps> = ({
             initial={{ opacity: 0, y: 12, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.45 }}
-            className="w-full max-w-2xl rounded-2xl border border-cyan-500/30 bg-slate-900/80 p-5 sm:p-6 backdrop-blur-xl shadow-2xl text-left"
+            className="w-full max-w-2xl rounded-2xl border border-cyan-500/30 bg-slate-900/80 p-4 sm:p-6 backdrop-blur-xl shadow-2xl text-left"
           >
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-800/80">
-              <div className="flex items-center gap-3.5">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 pb-4 border-b border-slate-800/80">
+              <div className="flex items-center gap-3 min-w-0 w-full">
                 <img
                   src={currentTeacher.photo}
                   alt={currentTeacher.name}
-                  className="h-14 w-14 rounded-2xl object-cover border border-cyan-500/40 shrink-0"
+                  className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl object-cover border border-cyan-500/40 shrink-0"
                 />
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-xl sm:text-2xl font-extrabold font-display text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-400 to-rose-400">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <h2 className="text-lg sm:text-2xl font-extrabold font-display text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-400 to-rose-400 break-words">
                       Happy Teachers&apos; Day, {currentTeacher.name}
                     </h2>
                     <Heart className="h-4 w-4 fill-rose-500 text-rose-500 shrink-0" />
                   </div>
-                  <p className="text-xs sm:text-sm font-mono text-cyan-300 mt-0.5">
+                  <p className="text-xs sm:text-sm font-mono text-cyan-300 mt-0.5 break-words">
                     Thank you for inspiring us through <strong>{currentTeacher.subject}</strong>.
                   </p>
                 </div>

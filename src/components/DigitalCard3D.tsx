@@ -110,12 +110,12 @@ export const DigitalCard3D: React.FC<DigitalCard3DProps> = ({
           transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
           style={{ transformStyle: 'preserve-3d' }}
           onClick={handleFlip}
-          className="relative w-full min-h-[430px] cursor-pointer"
+          className="relative grid grid-cols-1 [&>*]:col-start-1 [&>*]:row-start-1 w-full cursor-pointer"
         >
           {/* FRONT FACE OF 3D FLIP CARD */}
           <div
             style={{ backfaceVisibility: 'hidden' }}
-            className="absolute inset-0 w-full h-full rounded-3xl border border-cyan-500/35 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-8 sm:p-10 shadow-2xl flex flex-col items-center justify-between text-center overflow-hidden"
+            className="w-full min-h-[380px] sm:min-h-[430px] rounded-3xl border border-cyan-500/35 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-6 sm:p-10 shadow-2xl flex flex-col items-center justify-between text-center overflow-hidden"
           >
             {/* Dynamic Cursor Light Reflection */}
             <div
