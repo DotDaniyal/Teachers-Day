@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, Sliders, Menu, X, Volume2, VolumeX, Sparkles } from 'lucide-react';
+import { Heart, Sliders, Menu, X, Volume2, VolumeX, Sun, Moon } from 'lucide-react';
 import { Teacher, CustomizationSettings } from '../types';
 import { sounds } from '../utils/audio';
 
@@ -9,6 +9,7 @@ interface NavbarProps {
   onOpenEasterEgg: () => void;
   settings: CustomizationSettings;
   onToggleSound: () => void;
+  onToggleThemeMode: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -17,6 +18,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenEasterEgg,
   settings,
   onToggleSound,
+  onToggleThemeMode,
 }) => {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
@@ -27,8 +29,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     const handleScroll = () => {
       setScrolled(window.scrollY > 40);
 
-      const sections = ['home', 'journey', 'teacher', 'what-you-taught-us', 'memories', 'card', 'thankyou'];
-      const scrollPos = window.scrollY + 200;
+      const sections = ['home', 'journey', 'teacher', 'superpowers', 'memories', 'impact', 'thankyou'];
+      const scrollPos = window.scrollY + 220;
 
       for (const sectionId of sections) {
         const el = document.getElementById(sectionId);
@@ -60,39 +62,42 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navLinks = [
     { label: 'Home', href: '#home', id: 'home' },
-    { label: 'Journey', href: '#journey', id: 'journey' },
-    { label: 'Teacher', href: '#teacher', id: 'teacher' },
-    { label: 'Lessons', href: '#what-you-taught-us', id: 'what-you-taught-us' },
+    { label: 'Story', href: '#journey', id: 'journey' },
+    { label: 'Superpowers', href: '#superpowers', id: 'superpowers' },
     { label: 'Memories', href: '#memories', id: 'memories' },
-    { label: 'Tribute Card', href: '#card', id: 'card' },
+    { label: 'Impact', href: '#impact', id: 'impact' },
+    { label: 'Thank You', href: '#thankyou', id: 'thankyou' },
   ];
+
+  const isLight = settings.themeMode === 'light';
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         scrolled
-          ? 'bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80 py-3 shadow-lg shadow-black/20'
+          ? 'bg-slate-950/85 backdrop-blur-md border-b border-slate-800/80 py-3 shadow-lg shadow-black/10'
           : 'bg-transparent py-5'
       }`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        {/* Zone 1: Single text element Brand mark (with easter egg click counter) */}
+        {/* Zone 1: Single text element Brand mark */}
         <button
+          type="button"
           onClick={handleLogoClick}
-          className="group flex items-center gap-2 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-lg px-2 py-1 -ml-2"
+          className="group flex items-center gap-2 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-lg px-2 py-1 -ml-2 whitespace-nowrap"
           title="Click 5 times for Developer Easter Egg!"
         >
           <span className="font-mono text-base sm:text-lg font-bold text-cyan-400 group-hover:text-cyan-300 transition-colors">
             &lt;/&gt;
           </span>
           <span className="text-sm font-semibold tracking-tight text-white flex items-center gap-1.5">
-            Teachers' Day
+            Teachers&apos; Day
             <Heart className="h-3.5 w-3.5 fill-rose-500 text-rose-500 animate-pulse" />
           </span>
         </button>
 
-        {/* Zone 2: 4-6 Clean text navigation links */}
-        <nav className="hidden md:flex items-center gap-7 text-sm font-medium">
+        {/* Zone 2: 6 Clean text navigation links */}
+        <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
           {navLinks.map((link) => {
             const isActive = activeSection === link.id;
             return (
@@ -100,7 +105,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 key={link.id}
                 href={link.href}
                 onClick={() => sounds.playClick()}
-                className={`relative py-1 transition-colors ${
+                className={`relative py-1 transition-colors whitespace-nowrap ${
                   isActive ? 'text-cyan-400 font-semibold' : 'text-slate-400 hover:text-slate-100'
                 }`}
               >
@@ -113,10 +118,29 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        {/* Zone 3: 1-2 Primary Action items */}
-        <div className="flex items-center gap-2.5">
+        {/* Zone 3: Primary Action items (Theme Toggle, Sound Toggle, Customize Tribute) */}
+        <div className="flex items-center gap-2">
+          {/* Dark / Light Mode Toggle */}
+          <button
+            type="button"
+            onClick={() => {
+              sounds.playClick();
+              onToggleThemeMode();
+            }}
+            className="rounded-lg border border-slate-800 bg-slate-900/80 p-2 text-slate-400 hover:text-white hover:border-slate-700 transition-colors"
+            title={isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+            aria-label={isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+          >
+            {isLight ? (
+              <Moon className="h-4 w-4 text-indigo-500" />
+            ) : (
+              <Sun className="h-4 w-4 text-amber-400" />
+            )}
+          </button>
+
           {/* Sound toggle */}
           <button
+            type="button"
             onClick={() => {
               onToggleSound();
               sounds.playClick();
@@ -132,8 +156,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </button>
 
-          {/* Quick Teacher badge / Customizer button */}
+          {/* Honoring Teacher Customizer button */}
           <button
+            type="button"
             onClick={() => {
               sounds.playClick();
               onOpenCustomizer();
@@ -142,13 +167,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <Sliders className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Honoring:</span>
-            <span className="font-bold text-white max-w-[120px] truncate">
+            <span className="font-bold text-white max-w-[110px] truncate">
               {currentTeacher.name}
             </span>
           </button>
 
           {/* Mobile menu hamburger */}
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden rounded-lg border border-slate-800 bg-slate-900 p-2 text-slate-400 hover:text-white"
             aria-label="Toggle Navigation Menu"
@@ -161,7 +187,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden border-b border-slate-800 bg-slate-950/95 px-4 pt-3 pb-5 space-y-3 backdrop-blur-xl animate-in slide-in-from-top duration-200">
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col space-y-1.5">
             {navLinks.map((link) => (
               <a
                 key={link.id}
@@ -183,6 +209,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
             <span className="text-xs text-slate-400">Celebrating {currentTeacher.name}</span>
             <button
+              type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
                 onOpenCustomizer();

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Sliders, User, BookOpen, Sparkles, Volume2, VolumeX, Plus, Check, Trash2, RotateCcw, Upload, Camera, Image as ImageIcon } from 'lucide-react';
+import { X, Sliders, User, BookOpen, Sparkles, Volume2, VolumeX, Plus, Check, Trash2, RotateCcw, Upload, Camera, Image as ImageIcon, Sun, Moon } from 'lucide-react';
 import { Teacher, CustomizationSettings } from '../types';
 import { sounds } from '../utils/audio';
 import { processImageFile } from '../utils/imageUpload';
@@ -162,8 +162,40 @@ export const TeacherCustomizerDrawer: React.FC<TeacherCustomizerDrawerProps> = (
                 </button>
               </div>
 
-              {/* Sound and Background Particles quick options */}
+              {/* Theme, Sound, and Background Particles quick options */}
               <div className="mb-6 space-y-2.5">
+                <div className="rounded-xl border border-slate-800/80 bg-slate-900/50 p-3.5 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    {settings.themeMode === 'light' ? (
+                      <Sun className="h-4 w-4 text-amber-500" />
+                    ) : (
+                      <Moon className="h-4 w-4 text-cyan-400" />
+                    )}
+                    <span className="text-xs font-medium text-slate-300">
+                      Theme Mode ({settings.themeMode === 'light' ? 'Light' : 'Dark'})
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      sounds.playClick();
+                      onUpdateSettings({
+                        ...settings,
+                        themeMode: settings.themeMode === 'light' ? 'dark' : 'light',
+                      });
+                    }}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      settings.themeMode !== 'light' ? 'bg-cyan-500' : 'bg-amber-500'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        settings.themeMode !== 'light' ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+
                 <div className="rounded-xl border border-slate-800/80 bg-slate-900/50 p-3.5 flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
                     {settings.soundEnabled ? (

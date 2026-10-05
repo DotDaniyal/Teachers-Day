@@ -8,10 +8,11 @@ import { processImageFile } from '../utils/imageUpload';
 interface TeacherPersonalizerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (name: string, subject: string, photo?: string) => void;
+  onSave: (name: string, subject: string, photo?: string, studentName?: string) => void;
   teachers: Teacher[];
   currentTeacher: Teacher;
   onSelectTeacher: (teacher: Teacher) => void;
+  defaultStudentName?: string;
 }
 
 export const TeacherPersonalizerModal: React.FC<TeacherPersonalizerModalProps> = ({
@@ -21,10 +22,12 @@ export const TeacherPersonalizerModal: React.FC<TeacherPersonalizerModalProps> =
   teachers,
   currentTeacher,
   onSelectTeacher,
+  defaultStudentName = 'Your Grateful Students',
 }) => {
   const [name, setName] = useState(currentTeacher.name);
   const [subject, setSubject] = useState(currentTeacher.subject);
   const [photo, setPhoto] = useState(currentTeacher.photo);
+  const [studentName, setStudentName] = useState(defaultStudentName);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -49,7 +52,12 @@ export const TeacherPersonalizerModal: React.FC<TeacherPersonalizerModalProps> =
     e.preventDefault();
     if (name.trim()) {
       sounds.playChime();
-      onSave(name.trim(), subject.trim() || 'Web Development', photo);
+      onSave(
+        name.trim(),
+        subject.trim() || 'Web Development & AI',
+        photo,
+        studentName.trim() || 'Your Grateful Students'
+      );
       onClose();
     }
   };
@@ -186,7 +194,7 @@ export const TeacherPersonalizerModal: React.FC<TeacherPersonalizerModalProps> =
 
               <div>
                 <label className="block text-xs font-medium uppercase tracking-wider text-slate-300 mb-1.5">
-                  Subject / Field
+                  Optional Subject
                 </label>
                 <div className="relative">
                   <BookOpen className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -194,13 +202,39 @@ export const TeacherPersonalizerModal: React.FC<TeacherPersonalizerModalProps> =
                     type="text"
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
-                    placeholder="e.g., Web Development, Programming"
+                    placeholder="e.g., Artificial Intelligence, Web Development"
                     className="w-full rounded-xl border border-slate-700 bg-slate-950/80 py-2.5 pl-10 pr-4 text-sm text-white placeholder-slate-400 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400 transition-colors"
                   />
                 </div>
               </div>
 
-              <div className="pt-3">
+              <div>
+                <label className="block text-xs font-medium uppercase tracking-wider text-slate-300 mb-1.5">
+                  Student Name / Batch
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <input
+                    type="text"
+                    value={studentName}
+                    onChange={(e) => setStudentName(e.target.value)}
+                    placeholder="e.g., Daniyal & Batch of 2026"
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950/80 py-2.5 pl-10 pr-4 text-sm text-white placeholder-slate-400 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400 transition-colors"
+                  />
+                </div>
+              </div>
+
+              {/* Dynamic Preview Banner */}
+              <div className="rounded-xl border border-cyan-500/30 bg-cyan-950/30 p-3.5 text-center space-y-1">
+                <p className="text-sm font-bold font-display text-white">
+                  Happy Teachers' Day, {name || 'Teacher'} ❤️
+                </p>
+                <p className="text-xs text-cyan-300">
+                  "Thank you for inspiring us through {subject || 'your guidance'}."
+                </p>
+              </div>
+
+              <div className="pt-2">
                 <button
                   type="submit"
                   className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-rose-500 py-3 px-6 font-semibold text-white shadow-lg shadow-cyan-500/25 hover:opacity-95 active:scale-98 transition-all"

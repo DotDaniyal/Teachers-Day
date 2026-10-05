@@ -1,4 +1,4 @@
-import { Teacher, TributeMessage } from '../types';
+import { Teacher, TributeMessage, MemoryPolaroid } from '../types';
 
 export const INITIAL_TEACHERS: Teacher[] = [
   {
@@ -67,6 +67,7 @@ export const INITIAL_TRIBUTES: TributeMessage[] = [
   {
     id: 't-0',
     teacherId: 'zuhaib',
+    teacherName: 'Sir Zuhaib',
     authorName: 'AI & Web Dev Batch of 2026',
     message: 'Sir Zuhaib, thank you for demystifying Artificial Intelligence and showing us how to harness AI with confidence, curiosity, and real-world engineering skill!',
     category: 'gratitude',
@@ -77,6 +78,7 @@ export const INITIAL_TRIBUTES: TributeMessage[] = [
   {
     id: 't-1',
     teacherId: 'ahmed',
+    teacherName: 'Sir Ahmed',
     authorName: 'Daniyal & Batch of 2026',
     message: 'When I started, I could barely center a div. Today I build full-stack apps with confidence, all thanks to your patience and wisdom during late-night lab sessions!',
     category: 'gratitude',
@@ -87,6 +89,7 @@ export const INITIAL_TRIBUTES: TributeMessage[] = [
   {
     id: 't-2',
     teacherId: 'ahmed',
+    teacherName: 'Sir Ahmed',
     authorName: 'Elena Rostova',
     message: 'Remember when my async function created an infinite loop and crashed the browser tab? You laughed, showed me Promise chaining, and stayed 45 minutes extra to explain the event loop. Best teacher ever.',
     category: 'memories',
@@ -97,6 +100,7 @@ export const INITIAL_TRIBUTES: TributeMessage[] = [
   {
     id: 't-3',
     teacherId: 'sarah',
+    teacherName: 'Prof. Sarah Jenkins',
     authorName: 'Marcus Vance',
     message: 'You taught us that accessibility and UX empathy matter just as much as clean code. You transformed how I look at software development forever.',
     category: 'lesson',
@@ -107,12 +111,48 @@ export const INITIAL_TRIBUTES: TributeMessage[] = [
   {
     id: 't-4',
     teacherId: 'chen',
+    teacherName: 'Mentor Alex Chen',
     authorName: 'Aisha Noor',
     message: '"Look at line 27" will forever be engraved in our minds! Thank you for believing in us when our algorithms refused to pass test cases.',
     category: 'humor',
     createdAt: '3 days ago',
     likes: 51,
     avatarSeed: 'A',
+  },
+];
+
+export const INITIAL_POLAROIDS: MemoryPolaroid[] = [
+  {
+    id: 'mem-1',
+    title: 'Our First AI & Web Lab Session',
+    caption: 'The moment our first neural model & web frontend connected without a single console error.',
+    dateLabel: 'Spring Semester • Lab 01',
+    imageUrl: '/src/assets/images/tribute_hero_canvas_1791166103546.jpg',
+    rotation: -2,
+  },
+  {
+    id: 'mem-2',
+    title: 'Whiteboard Architecture Deep-Dive',
+    caption: 'Memory Snapshot Placeholder — Upload your favorite classroom or whiteboard photo here.',
+    dateLabel: 'Hackathon Prep • Week 06',
+    placeholderTheme: 'from-cyan-500/20 via-indigo-500/15 to-slate-900',
+    rotation: 1.5,
+  },
+  {
+    id: 'mem-3',
+    title: 'Late-Night Bug Hunting Victory',
+    caption: 'Memory Snapshot Placeholder — When a single missing bracket taught us patience and teamwork.',
+    dateLabel: 'Project Demo Day • Week 10',
+    placeholderTheme: 'from-indigo-500/20 via-purple-500/15 to-slate-900',
+    rotation: -1.5,
+  },
+  {
+    id: 'mem-4',
+    title: 'Shipping Our Final Capstone',
+    caption: 'Memory Snapshot Placeholder — Celebrating the day we went from students to confident creators.',
+    dateLabel: 'Graduation Showcase • 2026',
+    placeholderTheme: 'from-rose-500/20 via-amber-500/15 to-slate-900',
+    rotation: 2,
   },
 ];
 

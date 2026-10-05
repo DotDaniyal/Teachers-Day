@@ -4,8 +4,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { INITIAL_TEACHERS, INITIAL_TRIBUTES } from './data/initialData';
-import { Teacher, TributeMessage, CustomizationSettings } from './types';
+import { INITIAL_TEACHERS, INITIAL_TRIBUTES, INITIAL_POLAROIDS } from './data/initialData';
+import { Teacher, TributeMessage, MemoryPolaroid, CustomizationSettings } from './types';
 import { sounds } from './utils/audio';
 import { Navbar } from './components/Navbar';
 import { CursorGlow } from './components/CursorGlow';
@@ -14,10 +14,12 @@ import { StarParticlesBackground } from './components/StarParticlesBackground';
 import { Hero } from './components/Hero';
 import { BehindEveryDev } from './components/BehindEveryDev';
 import { TeacherSpotlight } from './components/TeacherSpotlight';
+import { InteractiveClassroom } from './components/InteractiveClassroom';
 import { WhatYouTaughtUs } from './components/WhatYouTaughtUs';
 import { CodeTransformation } from './components/CodeTransformation';
 import { DebuggingLife } from './components/DebuggingLife';
 import { TeacherSuperpowers } from './components/TeacherSuperpowers';
+import { MemoryGallery } from './components/MemoryGallery';
 import { TeacherImpactNetwork } from './components/TeacherImpactNetwork';
 import { CommunityMemoriesWall } from './components/CommunityMemoriesWall';
 import { DigitalCard3D } from './components/DigitalCard3D';
@@ -74,7 +76,9 @@ export default function App() {
       studentName: 'Your Grateful Students',
       customNote: '',
       themeColor: 'cyan',
+      themeMode: 'dark',
       soundEnabled: true,
+      particlesEnabled: true,
     };
   });
 
@@ -97,6 +101,17 @@ export default function App() {
     return INITIAL_TRIBUTES;
   });
 
+  // 5. Polaroid Memory Gallery
+  const [polaroids, setPolaroids] = useState<MemoryPolaroid[]>(() => {
+    try {
+      const saved = localStorage.getItem('tribute_polaroids');
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+    return INITIAL_POLAROIDS;
+  });
+
   // Modals & Panels state
   const [personalizerOpen, setPersonalizerOpen] = useState(false);
   const [customizerDrawerOpen, setCustomizerDrawerOpen] = useState(false);
@@ -106,6 +121,13 @@ export default function App() {
   useEffect(() => {
     sounds.enabled = settings.soundEnabled;
   }, [settings.soundEnabled]);
+
+  // Sync Dark / Light mode class on document.documentElement
+  useEffect(() => {
+    const isLight = settings.themeMode === 'light';
+    document.documentElement.classList.toggle('light', isLight);
+    document.documentElement.classList.toggle('dark', !isLight);
+  }, [settings.themeMode]);
 
   // Derive current teacher object safely
   const currentTeacher =
@@ -149,7 +171,12 @@ export default function App() {
     localStorage.setItem('tribute_active_teacher_id', INITIAL_TEACHERS[0].id);
   };
 
-  const handleQuickPersonalize = (name: string, subject: string, photo?: string) => {
+  const handleQuickPersonalize = (
+    name: string,
+    subject: string,
+    photo?: string,
+    studentName?: string
+  ) => {
     const updated = {
       ...currentTeacher,
       name,
@@ -157,6 +184,12 @@ export default function App() {
       ...(photo ? { photo } : {}),
     };
     handleUpdateTeacher(updated);
+    if (studentName) {
+      handleUpdateSettings({
+        ...settings,
+        studentName,
+      });
+    }
   };
 
   const handleUpdateSettings = (newSettings: CustomizationSettings) => {
@@ -164,6 +197,7 @@ export default function App() {
     localStorage.setItem('tribute_settings', JSON.stringify(newSettings));
   };
 
+  // Tribute Wall CRUD handlers
   const handleAddTribute = (newTribute: Omit<TributeMessage, 'id' | 'createdAt' | 'likes'>) => {
     const fullTribute: TributeMessage = {
       ...newTribute,
@@ -172,6 +206,28 @@ export default function App() {
       likes: 1,
     };
     const updated = [fullTribute, ...tributes];
+    setTributes(updated);
+    localStorage.setItem('tribute_messages', JSON.stringify(updated));
+  };
+
+  const handleEditTribute = (
+    id: string,
+    updatedFields: {
+      teacherName: string;
+      authorName: string;
+      message: string;
+      category: TributeMessage['category'];
+    }
+  ) => {
+    const updated = tributes.map((t) =>
+      t.id === id
+        ? {
+            ...t,
+            ...updatedFields,
+            avatarSeed: updatedFields.authorName.charAt(0).toUpperCase() || 'S',
+          }
+        : t
+    );
     setTributes(updated);
     localStorage.setItem('tribute_messages', JSON.stringify(updated));
   };
@@ -188,6 +244,44 @@ export default function App() {
     localStorage.setItem('tribute_messages', JSON.stringify(updated));
   };
 
+  const handleClearTributes = () => {
+    setTributes([]);
+    localStorage.setItem('tribute_messages', JSON.stringify([]));
+  };
+
+  const handleRestoreDefaultTributes = () => {
+    setTributes(INITIAL_TRIBUTES);
+    localStorage.setItem('tribute_messages', JSON.stringify(INITIAL_TRIBUTES));
+  };
+
+  // Polaroid Gallery CRUD handlers
+  const handleAddPolaroid = (newPolaroid: Omit<MemoryPolaroid, 'id'>) => {
+    const fullPolaroid: MemoryPolaroid = {
+      ...newPolaroid,
+      id: `mem-${Date.now()}`,
+    };
+    const updated = [fullPolaroid, ...polaroids];
+    setPolaroids(updated);
+    localStorage.setItem('tribute_polaroids', JSON.stringify(updated));
+  };
+
+  const handleUpdatePolaroidPhoto = (id: string, imageUrl: string) => {
+    const updated = polaroids.map((p) => (p.id === id ? { ...p, imageUrl } : p));
+    setPolaroids(updated);
+    localStorage.setItem('tribute_polaroids', JSON.stringify(updated));
+  };
+
+  const handleRemovePolaroid = (id: string) => {
+    const updated = polaroids.filter((p) => p.id !== id);
+    setPolaroids(updated);
+    localStorage.setItem('tribute_polaroids', JSON.stringify(updated));
+  };
+
+  const handleResetPolaroids = () => {
+    setPolaroids(INITIAL_POLAROIDS);
+    localStorage.setItem('tribute_polaroids', JSON.stringify(INITIAL_POLAROIDS));
+  };
+
   const handleToggleSound = () => {
     const next = !settings.soundEnabled;
     handleUpdateSettings({
@@ -196,10 +290,26 @@ export default function App() {
     });
   };
 
+  const handleToggleThemeMode = () => {
+    const nextMode = settings.themeMode === 'light' ? 'dark' : 'light';
+    handleUpdateSettings({
+      ...settings,
+      themeMode: nextMode,
+    });
+  };
+
+  const isLightMode = settings.themeMode === 'light';
+
   return (
-    <div className="relative min-h-screen bg-gray-950 text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200">
+    <div
+      className={`relative min-h-screen transition-colors duration-300 selection:bg-cyan-500/30 selection:text-cyan-200 ${
+        isLightMode ? 'theme-light bg-slate-50 text-slate-900' : 'bg-gray-950 text-slate-100'
+      }`}
+    >
       {/* Ambient Star Particles Across Entire Application */}
-      {settings.particlesEnabled !== false && <StarParticlesBackground />}
+      {settings.particlesEnabled !== false && (
+        <StarParticlesBackground themeMode={settings.themeMode || 'dark'} />
+      )}
 
       {/* Scroll Progress Bar at Top */}
       <ScrollProgress />
@@ -214,19 +324,20 @@ export default function App() {
         onOpenEasterEgg={() => setEasterEggOpen(true)}
         settings={settings}
         onToggleSound={handleToggleSound}
+        onToggleThemeMode={handleToggleThemeMode}
       />
 
       <main className="relative z-10">
-        {/* 1. Hero Entrance with Terminal Typing & Personalized Dedication */}
+        {/* SECTION 1: Cinematic Intro & Welcome Hero */}
         <Hero
           currentTeacher={currentTeacher}
           onOpenPersonalizer={() => setPersonalizerOpen(true)}
         />
 
-        {/* 2. Behind Every Developer Is a Teacher */}
+        {/* SECTION 2: Behind Every Developer Is a Teacher */}
         <BehindEveryDev />
 
-        {/* 3. Teacher Spotlight & Multi-Teacher Showcase */}
+        {/* SECTION 3: Faculty Spotlight & Multi-Teacher Showcase */}
         <TeacherSpotlight
           teachers={teachers}
           currentTeacher={currentTeacher}
@@ -235,41 +346,57 @@ export default function App() {
           onUpdateTeacher={handleUpdateTeacher}
         />
 
-        {/* 4. What You Taught Us (Animated Bento Grid) */}
+        {/* SECTION 4: Interactive Classroom Studio */}
+        <InteractiveClassroom currentTeacher={currentTeacher} />
+
+        {/* SECTION 5: What You Taught Us (Animated Bento Grid) */}
         <WhatYouTaughtUs />
 
-        {/* 5. Code -> Knowledge Transformation Interactive Machine */}
+        {/* SECTION 6: Code -> Knowledge Transformation Interactive Machine */}
         <CodeTransformation />
 
-        {/* 6. "The Debugging Life" Fun Section */}
+        {/* SECTION 7: "The Debugging Life" Fun Section */}
         <DebuggingLife currentTeacher={currentTeacher} />
 
-        {/* 7. Teacher Superpowers Spotlight Cards */}
+        {/* SECTION 8: Collectible Teacher Superpowers */}
         <TeacherSuperpowers />
 
-        {/* 8. Teacher Impact Network Interactive Visualization */}
-        <TeacherImpactNetwork currentTeacher={currentTeacher} />
+        {/* SECTION 9: Polaroid Memory Gallery */}
+        <MemoryGallery
+          polaroids={polaroids}
+          currentTeacher={currentTeacher}
+          onAddPolaroid={handleAddPolaroid}
+          onUpdatePolaroidPhoto={handleUpdatePolaroidPhoto}
+          onRemovePolaroid={handleRemovePolaroid}
+          onResetPolaroids={handleResetPolaroids}
+        />
 
-        {/* 9. Shared Community Memories & Heartfelt Thank You Wall */}
+        {/* SECTION 10: Student Appreciation Wall (Add / Edit / Delete / Clear) */}
         <CommunityMemoriesWall
           tributes={tributes}
           currentTeacher={currentTeacher}
           onAddTribute={handleAddTribute}
+          onEditTribute={handleEditTribute}
           onLikeTribute={handleLikeTribute}
           onRemoveTribute={handleRemoveTribute}
+          onClearTributes={handleClearTributes}
+          onRestoreDefaultTributes={handleRestoreDefaultTributes}
         />
 
-        {/* 10. Interactive 3D Digital Teachers' Day Card */}
+        {/* SECTION 11: The Impact of a Teacher (Glowing Path + Constellation) */}
+        <TeacherImpactNetwork currentTeacher={currentTeacher} />
+
+        {/* SECTION 12: Interactive 3D Digital Teachers' Day Card */}
         <DigitalCard3D
           currentTeacher={currentTeacher}
           studentName={settings.studentName}
           customNote={settings.customNote}
         />
 
-        {/* 11. Epic "SAY THANK YOU ❤️" Mega Button & Particle Burst */}
+        {/* SECTION 13: Epic "SAY THANK YOU ❤️" Mega Button & Particle Burst */}
         <ThankYouMegaButton currentTeacher={currentTeacher} />
 
-        {/* 12. Full-Screen Cinematic Finale */}
+        {/* SECTION 14: Final Surprise Section ("One more thing..." -> "Thank You, Teachers.") */}
         <CinematicFinale currentTeacher={currentTeacher} />
       </main>
 
@@ -288,6 +415,7 @@ export default function App() {
         teachers={teachers}
         currentTeacher={currentTeacher}
         onSelectTeacher={handleSelectTeacher}
+        defaultStudentName={settings.studentName}
       />
 
       {/* Developer Customization Drawer */}

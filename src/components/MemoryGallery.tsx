@@ -1,0 +1,308 @@
+import React, { useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Camera, Upload, PlusCircle, Trash2, Image as ImageIcon, Sparkles, RotateCcw } from 'lucide-react';
+import { MemoryPolaroid, Teacher } from '../types';
+import { sounds } from '../utils/audio';
+import { processImageFile } from '../utils/imageUpload';
+
+interface MemoryGalleryProps {
+  polaroids: MemoryPolaroid[];
+  currentTeacher: Teacher;
+  onAddPolaroid: (polaroid: Omit<MemoryPolaroid, 'id'>) => void;
+  onUpdatePolaroidPhoto: (id: string, imageUrl: string) => void;
+  onRemovePolaroid: (id: string) => void;
+  onResetPolaroids: () => void;
+}
+
+export const MemoryGallery: React.FC<MemoryGalleryProps> = ({
+  polaroids,
+  currentTeacher,
+  onAddPolaroid,
+  onUpdatePolaroidPhoto,
+  onRemovePolaroid,
+  onResetPolaroids,
+}) => {
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [title, setTitle] = useState('');
+  const [caption, setCaption] = useState('');
+  const [dateLabel, setDateLabel] = useState('Class of 2026');
+  const [newPhoto, setNewPhoto] = useState<string | undefined>(undefined);
+
+  const newPhotoInputRef = useRef<HTMLInputElement | null>(null);
+  const cardFileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  const handleNewFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      sounds.playClick();
+      const dataUrl = await processImageFile(file, 650);
+      setNewPhoto(dataUrl);
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleCardPhotoChange = async (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      sounds.playChime();
+      const dataUrl = await processImageFile(file, 650);
+      onUpdatePolaroidPhoto(id, dataUrl);
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleCreatePolaroid = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim()) return;
+    sounds.playChime();
+    onAddPolaroid({
+      title: title.trim(),
+      caption: caption.trim() || `A special classroom memory with ${currentTeacher.name}.`,
+      dateLabel: dateLabel.trim() || '2026',
+      imageUrl: newPhoto,
+      placeholderTheme: 'from-cyan-500/20 via-indigo-500/15 to-slate-900',
+      rotation: (Math.random() - 0.5) * 4,
+    });
+    setTitle('');
+    setCaption('');
+    setNewPhoto(undefined);
+    setShowAddForm(false);
+  };
+
+  return (
+    <section className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-14 gap-6">
+        <div className="max-w-2xl">
+          <div className="flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-cyan-400 mb-3">
+            <Camera className="h-3.5 w-3.5" />
+            <span>Polaroid Memory Gallery</span>
+          </div>
+          <h2 className="text-3xl sm:text-5xl font-extrabold font-display text-white tracking-tight text-balance mb-3">
+            Snapshots From Our Journey
+          </h2>
+          <p className="text-base sm:text-lg text-slate-300">
+            Moments of discovery, late-night debugging, and shared breakthroughs with {currentTeacher.name}.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              sounds.playClick();
+              onResetPolaroids();
+            }}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-2.5 text-xs font-semibold text-slate-300 hover:border-slate-700 hover:text-white transition-colors"
+            title="Restore default gallery snapshots"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+            <span>Reset</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              sounds.playClick();
+              setShowAddForm(!showAddForm);
+            }}
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-cyan-500/20 hover:opacity-95 transition-all"
+          >
+            <PlusCircle className="h-4 w-4" />
+            <span>{showAddForm ? 'Close Form' : 'Add Memory Polaroid'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Add Polaroid Form */}
+      <AnimatePresence>
+        {showAddForm && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mb-12 overflow-hidden"
+          >
+            <form
+              onSubmit={handleCreatePolaroid}
+              className="rounded-2xl border border-cyan-500/30 bg-slate-900/90 p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-4 max-w-2xl mx-auto"
+            >
+              <h3 className="text-lg font-bold font-display text-white">
+                Create a Memory Polaroid
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium uppercase tracking-wider text-slate-300 mb-1">
+                    Memory Title
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="e.g. First AI Model Deployment"
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium uppercase tracking-wider text-slate-300 mb-1">
+                    Date / Occasion
+                  </label>
+                  <input
+                    type="text"
+                    value={dateLabel}
+                    onChange={(e) => setDateLabel(e.target.value)}
+                    placeholder="e.g. Autumn 2026"
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium uppercase tracking-wider text-slate-300 mb-1">
+                  Caption
+                </label>
+                <textarea
+                  rows={2}
+                  value={caption}
+                  onChange={(e) => setCaption(e.target.value)}
+                  placeholder="Describe this classroom moment..."
+                  className="w-full rounded-xl border border-slate-700 bg-slate-950 p-3 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400 resize-none"
+                />
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  <input
+                    ref={newPhotoInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleNewFileChange}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => newPhotoInputRef.current?.click()}
+                    className="inline-flex items-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-950/40 px-4 py-2 text-xs font-semibold text-cyan-200 hover:bg-cyan-900/50 transition-colors"
+                  >
+                    <Upload className="h-3.5 w-3.5" />
+                    <span>{newPhoto ? 'Change Uploaded Photo' : 'Upload Optional Photo'}</span>
+                  </button>
+                  {newPhoto && (
+                    <img
+                      src={newPhoto}
+                      alt="Preview"
+                      className="h-9 w-9 rounded-lg object-cover border border-cyan-400"
+                    />
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 px-6 py-2.5 text-xs font-bold text-white shadow-lg shadow-cyan-500/20 hover:opacity-95"
+                >
+                  Save Polaroid
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Responsive Polaroid Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
+        {polaroids.map((item, idx) => (
+          <motion.div
+            key={item.id}
+            initial={{ opacity: 0, y: 24, rotate: item.rotation }}
+            whileInView={{ opacity: 1, y: 0, rotate: item.rotation }}
+            whileHover={{ rotate: 0, y: -8, scale: 1.02 }}
+            viewport={{ once: true }}
+            transition={{ delay: idx * 0.08, duration: 0.45 }}
+            className="group relative rounded-2xl border border-slate-800 bg-slate-900/90 p-3.5 pb-5 shadow-2xl backdrop-blur-xl flex flex-col justify-between transition-shadow hover:shadow-[0_20px_40px_-15px_rgba(56,189,248,0.2)]"
+          >
+            {/* Polaroid Image Slot */}
+            <div>
+              <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-slate-950 border border-slate-800/80 mb-4">
+                {item.imageUrl ? (
+                  <img
+                    src={item.imageUrl}
+                    alt={item.title}
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  /* Clearly Marked Memory Placeholder */
+                  <div
+                    className={`h-full w-full bg-gradient-to-br ${
+                      item.placeholderTheme || 'from-cyan-500/20 via-indigo-500/15 to-slate-900'
+                    } flex flex-col items-center justify-center p-4 text-center`}
+                  >
+                    <ImageIcon className="h-8 w-8 text-cyan-400/60 mb-2" />
+                    <span className="text-xs font-mono font-semibold text-slate-200">
+                      Memory Photo Placeholder
+                    </span>
+                    <span className="text-[11px] text-slate-400 mt-0.5">
+                      Click "Add Photo" to upload a snapshot
+                    </span>
+                  </div>
+                )}
+
+                {/* Upload / Replace Photo Overlay Button */}
+                <input
+                  ref={(el) => {
+                    cardFileInputRefs.current[item.id] = el;
+                  }}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleCardPhotoChange(item.id, e)}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => cardFileInputRefs.current[item.id]?.click()}
+                  className="absolute bottom-2.5 right-2.5 inline-flex items-center gap-1.5 rounded-lg bg-slate-950/85 border border-cyan-500/40 px-2.5 py-1 text-[11px] font-medium text-cyan-200 hover:bg-cyan-950 hover:text-white transition-all backdrop-blur-md"
+                  title="Upload photo for this Polaroid"
+                >
+                  <Camera className="h-3 w-3 text-cyan-400" />
+                  <span>{item.imageUrl ? 'Change Photo' : 'Add Photo'}</span>
+                </button>
+              </div>
+
+              {/* Polaroid Caption Area */}
+              <div className="px-1">
+                <div className="flex items-center justify-between text-[11px] font-mono text-cyan-400 mb-1">
+                  <span>{item.dateLabel}</span>
+                  {polaroids.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        sounds.playClick();
+                        onRemovePolaroid(item.id);
+                      }}
+                      className="text-slate-500 hover:text-rose-400 transition-colors p-0.5"
+                      title="Remove Polaroid"
+                      aria-label={`Remove ${item.title}`}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
+                <h3 className="text-base font-bold font-display text-white mb-1.5">
+                  {item.title}
+                </h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  {item.caption}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
+};
