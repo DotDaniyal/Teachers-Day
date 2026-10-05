@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import {
   ArrowDown,
@@ -15,7 +15,11 @@ import {
   Copy,
   Link2,
   Play,
+  PartyPopper,
+  Music,
+  Star,
 } from 'lucide-react';
+import confetti from 'canvas-confetti';
 import { Teacher } from '../types';
 import { sounds } from '../utils/audio';
 
@@ -38,6 +42,37 @@ export const Hero: React.FC<HeroProps> = ({
 }) => {
   const [copiedMessage, setCopiedMessage] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+
+  // Trigger a tasteful welcome confetti burst once on load
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      confetti({
+        particleCount: 55,
+        spread: 65,
+        origin: { y: 0.6 },
+        colors: ['#38bdf8', '#818cf8', '#fb7185', '#fbbf24'],
+      });
+    }, 650);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleCelebrateClick = () => {
+    sounds.playChime();
+    confetti({
+      particleCount: 70,
+      angle: 60,
+      spread: 60,
+      origin: { x: 0.15, y: 0.65 },
+      colors: ['#38bdf8', '#818cf8', '#fb7185', '#fbbf24', '#34d399'],
+    });
+    confetti({
+      particleCount: 70,
+      angle: 120,
+      spread: 60,
+      origin: { x: 0.85, y: 0.65 },
+      colors: ['#38bdf8', '#818cf8', '#fb7185', '#fbbf24', '#34d399'],
+    });
+  };
 
   const scrollToSection = (id: string) => {
     sounds.playClick();
@@ -108,41 +143,65 @@ export const Hero: React.FC<HeroProps> = ({
       <div className="absolute -top-32 left-10 w-72 h-72 bg-blue-600/10 blur-[100px] pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-600/10 blur-[120px] pointer-events-none" />
 
-      {/* Subtle floating educational & developer elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none select-none text-slate-500/20 font-mono text-xs sm:text-sm">
+      {/* Subtle floating hearts, stars, musical notes & educational symbols */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none select-none text-slate-500/25 font-mono text-xs sm:text-sm">
         <motion.div
-          animate={{ y: [0, -18, 0], opacity: [0.2, 0.45, 0.2] }}
-          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+          animate={{ y: [0, -20, 0], opacity: [0.2, 0.5, 0.2] }}
+          transition={{ duration: 6.5, repeat: Infinity, ease: 'easeInOut' }}
           className="absolute top-28 left-[8%] flex items-center gap-1.5"
         >
-          <BookOpen className="h-4 w-4 text-cyan-400/40" />
+          <BookOpen className="h-4 w-4 text-cyan-400/50" />
           <span className="hidden sm:inline">&lt;Knowledge /&gt;</span>
         </motion.div>
 
         <motion.div
-          animate={{ y: [0, 16, 0], opacity: [0.2, 0.4, 0.2] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+          animate={{ y: [0, -24, 0], x: [0, 8, 0], opacity: [0.2, 0.55, 0.2] }}
+          transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut', delay: 0.6 }}
+          className="absolute top-24 left-[24%] text-rose-400/50"
+        >
+          <Heart className="h-4 w-4 fill-rose-400/30" />
+        </motion.div>
+
+        <motion.div
+          animate={{ y: [0, 18, 0], opacity: [0.2, 0.5, 0.2] }}
+          transition={{ duration: 7.5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
           className="absolute top-36 right-[9%] flex items-center gap-1.5"
         >
-          <Lightbulb className="h-4 w-4 text-amber-400/40" />
+          <Lightbulb className="h-4 w-4 text-amber-400/50" />
           <span className="hidden sm:inline">inspire()</span>
         </motion.div>
 
         <motion.div
-          animate={{ y: [0, -15, 0], opacity: [0.15, 0.35, 0.15] }}
+          animate={{ y: [0, -22, 0], rotate: [0, 12, 0], opacity: [0.2, 0.5, 0.2] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1.2 }}
+          className="absolute top-48 right-[22%] text-indigo-400/50"
+        >
+          <Music className="h-4 w-4" />
+        </motion.div>
+
+        <motion.div
+          animate={{ y: [0, -16, 0], opacity: [0.15, 0.4, 0.15] }}
           transition={{ duration: 6.5, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
           className="absolute bottom-32 left-[10%] flex items-center gap-1.5"
         >
-          <PenTool className="h-4 w-4 text-indigo-400/40" />
+          <PenTool className="h-4 w-4 text-indigo-400/45" />
           <span className="hidden sm:inline">craft_future</span>
         </motion.div>
 
         <motion.div
-          animate={{ y: [0, 18, 0], opacity: [0.15, 0.35, 0.15] }}
+          animate={{ y: [0, -20, 0], scale: [1, 1.15, 1], opacity: [0.2, 0.55, 0.2] }}
+          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.9 }}
+          className="absolute bottom-40 left-[23%] text-amber-400/50"
+        >
+          <Star className="h-4 w-4 fill-amber-400/30" />
+        </motion.div>
+
+        <motion.div
+          animate={{ y: [0, 18, 0], opacity: [0.15, 0.4, 0.15] }}
           transition={{ duration: 8.5, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
           className="absolute bottom-28 right-[11%] flex items-center gap-1.5"
         >
-          <GraduationCap className="h-4 w-4 text-rose-400/40" />
+          <GraduationCap className="h-4 w-4 text-rose-400/45" />
           <span className="hidden sm:inline">mentorship ✓</span>
         </motion.div>
       </div>
@@ -173,25 +232,39 @@ export const Hero: React.FC<HeroProps> = ({
             </button>
           </div>
 
-          {/* Main Heading */}
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight font-display text-white max-w-4xl text-balance leading-[1.08] mb-3">
-            Happy Teachers&apos; Day
-          </h1>
+          {/* Main Animated Heading */}
+          <motion.h1
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+            className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight font-display text-white max-w-4xl text-balance leading-[1.08] mb-3"
+          >
+            Happy Teacher&apos;s Day! 🎓
+          </motion.h1>
 
           {/* Editorial Subtitle */}
           <p className="text-base sm:text-xl text-slate-300 max-w-2xl text-balance mb-7 leading-relaxed">
             A tribute to the people who guide us, inspire us and help shape our future.
           </p>
 
-          {/* Primary Hero Actions ("Create a Tribute" & "Explore the Story") */}
+          {/* Primary Hero Actions ("Celebrate", "Create a Tribute", "Explore the Story") */}
           <div className="flex flex-wrap items-center justify-center gap-3.5 mb-10">
+            <button
+              type="button"
+              onClick={handleCelebrateClick}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 px-6 py-3.5 font-bold text-white shadow-[0_0_25px_rgba(244,63,94,0.3)] hover:brightness-110 active:scale-95 transition-all whitespace-nowrap cursor-pointer"
+            >
+              <PartyPopper className="h-4 w-4" />
+              <span>Celebrate! 🎉</span>
+            </button>
+
             <button
               type="button"
               onClick={() => {
                 sounds.playClick();
                 onOpenPersonalizer();
               }}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-rose-500 px-7 py-3.5 font-semibold text-white shadow-[0_0_25px_rgba(56,189,248,0.25)] hover:shadow-[0_0_35px_rgba(56,189,248,0.4)] hover:brightness-110 active:scale-98 transition-all whitespace-nowrap cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-blue-600 px-6 py-3.5 font-semibold text-white shadow-[0_0_25px_rgba(56,189,248,0.25)] hover:brightness-110 active:scale-95 transition-all whitespace-nowrap cursor-pointer"
             >
               <Sparkles className="h-4 w-4" />
               <span>Create a Tribute</span>
@@ -200,7 +273,7 @@ export const Hero: React.FC<HeroProps> = ({
             <button
               type="button"
               onClick={() => scrollToSection('journey')}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900/80 px-7 py-3.5 font-semibold text-slate-200 hover:bg-slate-800 hover:border-slate-600 hover:text-white transition-all backdrop-blur-md whitespace-nowrap cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900/80 px-6 py-3.5 font-semibold text-slate-200 hover:bg-slate-800 hover:border-slate-600 hover:text-white transition-all backdrop-blur-md whitespace-nowrap cursor-pointer"
             >
               <span>Explore the Story</span>
               <ArrowDown className="h-4 w-4" />
@@ -254,7 +327,7 @@ export const Hero: React.FC<HeroProps> = ({
                     sounds.playClick();
                     onOpenPersonalizer();
                   }}
-                  className="inline-flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-800/70 px-2.5 py-1.5 text-xs font-medium text-slate-200 hover:border-cyan-400 hover:text-white transition-colors"
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-800/70 px-2.5 py-1.5 text-xs font-medium text-slate-200 hover:border-cyan-400 hover:text-white transition-colors cursor-pointer"
                   title="Edit Personalized Tribute"
                 >
                   <Edit3 className="h-3 w-3 text-cyan-400" />
@@ -267,7 +340,7 @@ export const Hero: React.FC<HeroProps> = ({
                     sounds.playClick();
                     onResetTribute();
                   }}
-                  className="inline-flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-800/70 px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:border-slate-600 hover:text-white transition-colors"
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-800/70 px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:border-slate-600 hover:text-white transition-colors cursor-pointer"
                   title="Reset Tribute"
                 >
                   <RotateCcw className="h-3 w-3" />
@@ -277,7 +350,7 @@ export const Hero: React.FC<HeroProps> = ({
                 <button
                   type="button"
                   onClick={handleCopyMessage}
-                  className="inline-flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-800/70 px-2.5 py-1.5 text-xs font-medium text-slate-200 hover:border-cyan-400 hover:text-white transition-colors"
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-800/70 px-2.5 py-1.5 text-xs font-medium text-slate-200 hover:border-cyan-400 hover:text-white transition-colors cursor-pointer"
                   title="Copy Tribute Message"
                 >
                   {copiedMessage ? (
@@ -296,7 +369,7 @@ export const Hero: React.FC<HeroProps> = ({
                 <button
                   type="button"
                   onClick={handleCopyLink}
-                  className="inline-flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-800/70 px-2.5 py-1.5 text-xs font-medium text-slate-200 hover:border-cyan-400 hover:text-white transition-colors"
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-800/70 px-2.5 py-1.5 text-xs font-medium text-slate-200 hover:border-cyan-400 hover:text-white transition-colors cursor-pointer"
                   title="Copy Website Link"
                 >
                   {copiedLink ? (
@@ -315,7 +388,7 @@ export const Hero: React.FC<HeroProps> = ({
                 <button
                   type="button"
                   onClick={handleShareTribute}
-                  className="inline-flex items-center gap-1 rounded-lg bg-cyan-500/20 border border-cyan-500/40 px-3 py-1.5 text-xs font-semibold text-cyan-200 hover:bg-cyan-500/30 transition-colors"
+                  className="inline-flex items-center gap-1 rounded-lg bg-cyan-500/20 border border-cyan-500/40 px-3 py-1.5 text-xs font-semibold text-cyan-200 hover:bg-cyan-500/30 transition-colors cursor-pointer"
                   title="Share Tribute"
                 >
                   <Share2 className="h-3 w-3 text-cyan-400" />

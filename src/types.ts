@@ -16,6 +16,7 @@ export interface TributeMessage {
   id: string;
   teacherId: string;
   teacherName?: string;
+  subjectTag?: string;
   authorName: string;
   message: string;
   category: 'memories' | 'lesson' | 'gratitude' | 'humor';

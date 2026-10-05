@@ -23,10 +23,12 @@ import { TeacherSuperpowers } from './components/TeacherSuperpowers';
 import { MemoryGallery } from './components/MemoryGallery';
 import { TeacherImpactNetwork } from './components/TeacherImpactNetwork';
 import { CommunityMemoriesWall } from './components/CommunityMemoriesWall';
+import { AwardCertificateGenerator } from './components/AwardCertificateGenerator';
 import { DigitalCard3D } from './components/DigitalCard3D';
 import { ThankYouMegaButton } from './components/ThankYouMegaButton';
 import { CinematicFinale } from './components/CinematicFinale';
 import { Footer } from './components/Footer';
+import { FloatingAudioPlayer } from './components/FloatingAudioPlayer';
 import { TeacherPersonalizerModal } from './components/TeacherPersonalizerModal';
 import { TeacherCustomizerDrawer } from './components/TeacherCustomizerDrawer';
 import { EasterEggModal } from './components/EasterEggModal';
@@ -225,6 +227,7 @@ export default function App() {
     id: string,
     updatedFields: {
       teacherName: string;
+      subjectTag?: string;
       authorName: string;
       message: string;
       category: TributeMessage['category'];
@@ -408,19 +411,28 @@ export default function App() {
         {/* SECTION 11: The Impact of a Teacher (Glowing Path + Constellation) */}
         <TeacherImpactNetwork currentTeacher={currentTeacher} />
 
-        {/* SECTION 12: Interactive 3D Digital Teachers' Day Card */}
+        {/* SECTION 12: Award Certificate Generator */}
+        <AwardCertificateGenerator
+          currentTeacher={currentTeacher}
+          defaultStudentName={settings.studentName}
+        />
+
+        {/* SECTION 13: Interactive 3D Digital Teachers' Day Flip Card */}
         <DigitalCard3D
           currentTeacher={currentTeacher}
           studentName={settings.studentName}
           customNote={settings.customNote}
         />
 
-        {/* SECTION 13: Epic "SAY THANK YOU ❤️" Mega Button & Particle Burst */}
+        {/* SECTION 14: Epic "SAY THANK YOU ❤️" Mega Button & Particle Burst */}
         <ThankYouMegaButton currentTeacher={currentTeacher} />
 
-        {/* SECTION 14: Final Surprise Section ("One more thing..." -> "Thank You, Teachers.") */}
+        {/* SECTION 15: Final Surprise Section ("One more thing..." -> "Thank You, Teachers.") */}
         <CinematicFinale currentTeacher={currentTeacher} />
       </main>
+
+      {/* Floating Background Ambient Music Player with Visualizer */}
+      <FloatingAudioPlayer />
 
       {/* Footer */}
       <Footer
