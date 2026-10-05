@@ -29,6 +29,7 @@ export interface MemoryPolaroid {
   title: string;
   caption: string;
   dateLabel: string;
+  teacherName?: string;
   imageUrl?: string;
   placeholderTheme?: string;
   rotation: number;

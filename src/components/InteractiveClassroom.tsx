@@ -185,9 +185,24 @@ export const InteractiveClassroom: React.FC<InteractiveClassroomProps> = ({ curr
                   </div>
                 </div>
 
-                {/* Chalkboard Formula Banner */}
-                <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4 font-mono text-xs sm:text-sm text-cyan-300">
-                  {active.formula}
+                {/* Chalkboard Progressive Writing Banner */}
+                <div className="rounded-xl border border-slate-800 bg-slate-900/90 p-5 space-y-2">
+                  <motion.div
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.35 }}
+                    className="text-lg sm:text-xl font-bold font-display text-white tracking-tight"
+                  >
+                    &ldquo;Knowledge changes everything.&rdquo;
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2, duration: 0.4 }}
+                    className="font-mono text-xs sm:text-sm text-cyan-300"
+                  >
+                    {active.formula}
+                  </motion.div>
                 </div>
 
                 <p className="text-base sm:text-lg text-slate-200 leading-relaxed">

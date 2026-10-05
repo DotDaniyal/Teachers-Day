@@ -101,15 +101,19 @@ export const CommunityMemoriesWall: React.FC<CommunityMemoriesWallProps> = ({
   });
 
   return (
-    <section id="memories" className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section id="messages" className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-12">
         <div className="flex items-center justify-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-cyan-400 mb-3">
           <MessageSquare className="h-3.5 w-3.5" />
           <span>Student Appreciation Wall</span>
+          <span>·</span>
+          <span className="text-slate-200 tabular-nums">
+            {tributes.length} {tributes.length === 1 ? 'Message' : 'Messages'} of Appreciation
+          </span>
         </div>
         <h2 className="text-3xl sm:text-5xl font-extrabold font-display text-white tracking-tight text-balance mb-4">
-          Heartfelt Memories & Thank You Notes
+          Words From Students
         </h2>
         <p className="text-base sm:text-lg text-slate-300">
           Add, edit, or curate appreciation messages dedicated to our teachers—saved directly in your browser.
@@ -298,10 +302,10 @@ export const CommunityMemoriesWall: React.FC<CommunityMemoriesWallProps> = ({
         <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-12 text-center max-w-lg mx-auto">
           <MessageSquare className="h-10 w-10 text-cyan-400/50 mx-auto mb-3" />
           <h3 className="text-lg font-bold font-display text-white mb-1">
-            No Appreciation Messages Yet
+            Be the first to leave a message for a teacher.
           </h3>
           <p className="text-sm text-slate-400 mb-6">
-            Be the first to write a heartfelt note for {currentTeacher.name}, or restore the sample notes.
+            Share a classroom memory, a lesson that stayed with you, or a note of gratitude for {currentTeacher.name}.
           </p>
           <div className="flex items-center justify-center gap-3">
             <button

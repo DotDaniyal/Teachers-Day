@@ -1,63 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { ArrowDown, Heart, Sparkles, Terminal, UserCheck, Share2, Check, FastForward } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion } from 'motion/react';
+import {
+  ArrowDown,
+  Heart,
+  Sparkles,
+  Share2,
+  Check,
+  BookOpen,
+  PenTool,
+  GraduationCap,
+  Lightbulb,
+  Edit3,
+  RotateCcw,
+  Copy,
+  Link2,
+  Play,
+} from 'lucide-react';
 import { Teacher } from '../types';
 import { sounds } from '../utils/audio';
 
 interface HeroProps {
   currentTeacher: Teacher;
+  studentName: string;
+  customNote: string;
   onOpenPersonalizer: () => void;
+  onResetTribute: () => void;
+  onReplayIntro: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ currentTeacher, onOpenPersonalizer }) => {
-  const [introPhase, setIntroPhase] = useState<'quote' | 'terminal' | 'ready'>('quote');
-  const [terminalStep, setTerminalStep] = useState(0);
-  const [shareCopied, setShareCopied] = useState(false);
-
-  const bootLogs = [
-    'booting gratitude...',
-    'loading memories...',
-    'compiling knowledge...',
-    'initializing teacher_appreciation...',
-    'success ✓',
-  ];
-
-  useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) {
-      setIntroPhase('ready');
-      return;
-    }
-
-    const quoteTimer = setTimeout(() => {
-      setIntroPhase((prev) => (prev === 'quote' ? 'terminal' : prev));
-    }, 1500);
-
-    return () => clearTimeout(quoteTimer);
-  }, []);
-
-  useEffect(() => {
-    if (introPhase !== 'terminal') return;
-
-    const timer = setInterval(() => {
-      setTerminalStep((prev) => {
-        if (prev < bootLogs.length) {
-          return prev + 1;
-        } else {
-          clearInterval(timer);
-          setTimeout(() => setIntroPhase('ready'), 350);
-          return prev;
-        }
-      });
-    }, 220);
-
-    return () => clearInterval(timer);
-  }, [introPhase]);
-
-  const handleSkipIntro = () => {
-    sounds.playClick();
-    setIntroPhase('ready');
-  };
+export const Hero: React.FC<HeroProps> = ({
+  currentTeacher,
+  studentName,
+  customNote,
+  onOpenPersonalizer,
+  onResetTribute,
+  onReplayIntro,
+}) => {
+  const [copiedMessage, setCopiedMessage] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   const scrollToSection = (id: string) => {
     sounds.playClick();
@@ -67,10 +47,39 @@ export const Hero: React.FC<HeroProps> = ({ currentTeacher, onOpenPersonalizer }
     }
   };
 
+  const getFormattedMessage = () => {
+    const base = `Happy Teachers' Day, ${currentTeacher.name}! ❤️\nThank you for inspiring us through ${currentTeacher.subject}.`;
+    const extra = customNote ? `\n"${customNote}"` : `\n"${currentTeacher.quote}"`;
+    const from = `\n— ${studentName || 'Your Grateful Students'}`;
+    return `${base}${extra}${from}`;
+  };
+
+  const handleCopyMessage = async () => {
+    sounds.playClick();
+    try {
+      await navigator.clipboard.writeText(getFormattedMessage());
+      setCopiedMessage(true);
+      setTimeout(() => setCopiedMessage(false), 2200);
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleCopyLink = async () => {
+    sounds.playClick();
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2200);
+    } catch {
+      // ignore
+    }
+  };
+
   const handleShareTribute = async () => {
     sounds.playChime();
     const shareTitle = `Happy Teachers' Day, ${currentTeacher.name}! ❤️`;
-    const shareText = `Happy Teachers' Day, ${currentTeacher.name}! Thank you for inspiring us through ${currentTeacher.subject}. "You taught us how to code. You taught us how to think. You helped us build our future."`;
+    const shareText = getFormattedMessage();
     const shareUrl = window.location.href;
 
     if (navigator.share) {
@@ -82,17 +91,11 @@ export const Hero: React.FC<HeroProps> = ({ currentTeacher, onOpenPersonalizer }
         });
         return;
       } catch {
-        // Fallback to clipboard copy if user cancels or share fails
+        // Fallback to copy message
       }
     }
 
-    try {
-      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
-      setShareCopied(true);
-      setTimeout(() => setShareCopied(false), 2500);
-    } catch {
-      // ignore
-    }
+    handleCopyMessage();
   };
 
   return (
@@ -105,227 +108,224 @@ export const Hero: React.FC<HeroProps> = ({ currentTeacher, onOpenPersonalizer }
       <div className="absolute -top-32 left-10 w-72 h-72 bg-blue-600/10 blur-[100px] pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-600/10 blur-[120px] pointer-events-none" />
 
-      {/* Floating subtle educational & developer symbols */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none select-none text-slate-500/20 font-mono text-sm">
-        <motion.span
-          animate={{ y: [0, -25, 0], opacity: [0.15, 0.4, 0.15] }}
+      {/* Subtle floating educational & developer elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none select-none text-slate-500/20 font-mono text-xs sm:text-sm">
+        <motion.div
+          animate={{ y: [0, -18, 0], opacity: [0.2, 0.45, 0.2] }}
           transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-28 left-[10%]"
+          className="absolute top-28 left-[8%] flex items-center gap-1.5"
         >
-          &lt;Wisdom /&gt;
-        </motion.span>
-        <motion.span
-          animate={{ y: [0, 20, 0], opacity: [0.15, 0.35, 0.15] }}
+          <BookOpen className="h-4 w-4 text-cyan-400/40" />
+          <span className="hidden sm:inline">&lt;Knowledge /&gt;</span>
+        </motion.div>
+
+        <motion.div
+          animate={{ y: [0, 16, 0], opacity: [0.2, 0.4, 0.2] }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-          className="absolute top-44 right-[12%]"
+          className="absolute top-36 right-[9%] flex items-center gap-1.5"
         >
-          async function inspire()
-        </motion.span>
-        <motion.span
-          animate={{ y: [0, -18, 0], opacity: [0.1, 0.3, 0.1] }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-          className="absolute bottom-36 left-[15%]"
+          <Lightbulb className="h-4 w-4 text-amber-400/40" />
+          <span className="hidden sm:inline">inspire()</span>
+        </motion.div>
+
+        <motion.div
+          animate={{ y: [0, -15, 0], opacity: [0.15, 0.35, 0.15] }}
+          transition={{ duration: 6.5, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
+          className="absolute bottom-32 left-[10%] flex items-center gap-1.5"
         >
-          git commit -m "gratitude"
-        </motion.span>
-        <motion.span
-          animate={{ y: [0, 22, 0], opacity: [0.1, 0.3, 0.1] }}
-          transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
-          className="absolute bottom-28 right-[16%]"
+          <PenTool className="h-4 w-4 text-indigo-400/40" />
+          <span className="hidden sm:inline">craft_future</span>
+        </motion.div>
+
+        <motion.div
+          animate={{ y: [0, 18, 0], opacity: [0.15, 0.35, 0.15] }}
+          transition={{ duration: 8.5, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+          className="absolute bottom-28 right-[11%] flex items-center gap-1.5"
         >
-          npm run build-future
-        </motion.span>
+          <GraduationCap className="h-4 w-4 text-rose-400/40" />
+          <span className="hidden sm:inline">mentorship ✓</span>
+        </motion.div>
       </div>
 
       <div className="relative z-10 mx-auto max-w-5xl text-center flex flex-col items-center w-full">
-        <AnimatePresence mode="wait">
-          {introPhase === 'quote' && (
-            <motion.div
-              key="intro-quote"
-              initial={{ opacity: 0, y: 15, filter: 'blur(6px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -15, filter: 'blur(6px)' }}
-              transition={{ duration: 0.6 }}
-              className="flex flex-col items-center justify-center py-16 px-4 max-w-2xl"
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col items-center w-full"
+        >
+          {/* Year Meta Kicker + Replay Intro option */}
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-mono font-semibold tracking-wider text-cyan-400 mb-4">
+            <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
+            <span>HAPPY TEACHERS&apos; DAY • 2026</span>
+            <span aria-hidden="true">·</span>
+            <button
+              type="button"
+              onClick={() => {
+                sounds.playClick();
+                onReplayIntro();
+              }}
+              className="inline-flex items-center gap-1 text-slate-400 hover:text-cyan-300 transition-colors cursor-pointer"
+              title="Replay Cinematic Intro"
             >
-              <Sparkles className="h-6 w-6 text-cyan-400 mb-4 animate-pulse" />
-              <p className="text-2xl sm:text-4xl font-display font-semibold text-white tracking-tight leading-snug text-balance mb-8">
-                "Every dream begins with someone who believes in us."
-              </p>
-              <button
-                type="button"
-                onClick={handleSkipIntro}
-                className="inline-flex items-center gap-1.5 rounded-full border border-slate-700 bg-slate-900/80 px-4 py-1.5 text-xs font-mono text-slate-300 hover:border-cyan-400 hover:text-white transition-colors"
-              >
-                <span>Skip Intro</span>
-                <FastForward className="h-3.5 w-3.5" />
-              </button>
-            </motion.div>
-          )}
+              <Play className="h-3 w-3" />
+              <span>Replay Intro</span>
+            </button>
+          </div>
 
-          {introPhase === 'terminal' && (
-            <motion.div
-              key="intro-terminal"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.35 }}
-              className="w-full max-w-md flex flex-col items-center"
+          {/* Main Heading */}
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight font-display text-white max-w-4xl text-balance leading-[1.08] mb-3">
+            Happy Teachers&apos; Day
+          </h1>
+
+          {/* Editorial Subtitle */}
+          <p className="text-base sm:text-xl text-slate-300 max-w-2xl text-balance mb-7 leading-relaxed">
+            A tribute to the people who guide us, inspire us and help shape our future.
+          </p>
+
+          {/* Primary Hero Actions ("Create a Tribute" & "Explore the Story") */}
+          <div className="flex flex-wrap items-center justify-center gap-3.5 mb-10">
+            <button
+              type="button"
+              onClick={() => {
+                sounds.playClick();
+                onOpenPersonalizer();
+              }}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-rose-500 px-7 py-3.5 font-semibold text-white shadow-[0_0_25px_rgba(56,189,248,0.25)] hover:shadow-[0_0_35px_rgba(56,189,248,0.4)] hover:brightness-110 active:scale-98 transition-all whitespace-nowrap cursor-pointer"
             >
-              <div className="w-full rounded-xl border border-cyan-500/30 bg-slate-950/90 p-5 font-mono text-xs text-left shadow-2xl shadow-cyan-500/10 mb-5 backdrop-blur-md">
-                <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800 text-slate-400">
+              <Sparkles className="h-4 w-4" />
+              <span>Create a Tribute</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => scrollToSection('journey')}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900/80 px-7 py-3.5 font-semibold text-slate-200 hover:bg-slate-800 hover:border-slate-600 hover:text-white transition-all backdrop-blur-md whitespace-nowrap cursor-pointer"
+            >
+              <span>Explore the Story</span>
+              <ArrowDown className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* Personalized Animated Digital Tribute Card */}
+          <motion.div
+            key={`${currentTeacher.id}-${currentTeacher.name}-${currentTeacher.subject}`}
+            initial={{ opacity: 0, y: 12, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.45 }}
+            className="w-full max-w-2xl rounded-2xl border border-cyan-500/30 bg-slate-900/80 p-5 sm:p-6 backdrop-blur-xl shadow-2xl text-left"
+          >
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-800/80">
+              <div className="flex items-center gap-3.5">
+                <img
+                  src={currentTeacher.photo}
+                  alt={currentTeacher.name}
+                  className="h-14 w-14 rounded-2xl object-cover border border-cyan-500/40 shrink-0"
+                />
+                <div>
                   <div className="flex items-center gap-2">
-                    <Terminal className="h-3.5 w-3.5 text-cyan-400" />
-                    <span>tribute_engine_v2026.sh</span>
+                    <h2 className="text-xl sm:text-2xl font-extrabold font-display text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-400 to-rose-400">
+                      Happy Teachers&apos; Day, {currentTeacher.name}
+                    </h2>
+                    <Heart className="h-4 w-4 fill-rose-500 text-rose-500 shrink-0" />
                   </div>
-                  <div className="flex gap-1.5">
-                    <span className="h-2.5 w-2.5 rounded-full bg-rose-500/80" />
-                    <span className="h-2.5 w-2.5 rounded-full bg-amber-500/80" />
-                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80" />
-                  </div>
-                </div>
-                <div className="space-y-1.5 min-h-[110px]">
-                  {bootLogs.slice(0, terminalStep).map((log, idx) => (
-                    <div
-                      key={idx}
-                      className={`flex items-center gap-2 ${
-                        idx === bootLogs.length - 1
-                          ? 'text-emerald-400 font-bold'
-                          : 'text-cyan-300'
-                      }`}
-                    >
-                      <span className="text-slate-500">&gt;</span>
-                      <span>{log}</span>
-                    </div>
-                  ))}
-                  {terminalStep < bootLogs.length && (
-                    <div className="flex items-center gap-2 text-slate-400">
-                      <span className="text-slate-500">&gt;</span>
-                      <span className="inline-block h-3.5 w-2 bg-cyan-400 animate-pulse" />
-                    </div>
-                  )}
+                  <p className="text-xs sm:text-sm font-mono text-cyan-300 mt-0.5">
+                    Thank you for inspiring us through <strong>{currentTeacher.subject}</strong>.
+                  </p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={handleSkipIntro}
-                className="inline-flex items-center gap-1.5 rounded-full border border-slate-700 bg-slate-900/80 px-4 py-1.5 text-xs font-mono text-slate-300 hover:border-cyan-400 hover:text-white transition-colors"
-              >
-                <span>Skip Intro</span>
-                <FastForward className="h-3.5 w-3.5" />
-              </button>
-            </motion.div>
-          )}
+            </div>
 
-          {introPhase === 'ready' && (
-            <motion.div
-              key="hero-ready"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col items-center"
-            >
-              {/* Year Meta Kicker */}
-              <div className="flex items-center gap-2 text-xs font-mono font-semibold tracking-wider text-cyan-400 mb-5">
-                <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
-                <span>TEACHERS' DAY • 2026</span>
-                <span aria-hidden="true">·</span>
-                <span className="text-slate-300">Interactive Digital Tribute</span>
-              </div>
+            {/* Custom / Teacher Message */}
+            <p className="mt-4 text-sm text-slate-300 italic leading-relaxed">
+              &ldquo;{customNote || currentTeacher.quote}&rdquo;
+            </p>
 
-              {/* Main Heading */}
-              <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight font-display text-white max-w-4xl text-balance leading-[1.1] mb-3">
-                HAPPY TEACHERS' DAY
-              </h1>
+            <div className="mt-4 pt-3 border-t border-slate-800/60 flex flex-wrap items-center justify-between gap-2">
+              <span className="text-xs font-mono text-slate-400">
+                From: <strong className="text-slate-200">{studentName || 'Your Grateful Students'}</strong>
+              </span>
 
-              {/* Dynamic Personalized Teacher Name */}
-              <motion.button
-                type="button"
-                key={currentTeacher.name}
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.4 }}
-                className="mb-4 inline-flex items-center gap-3 cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-xl px-3 py-1"
-                onClick={onOpenPersonalizer}
-                title="Click to personalize teacher name & subject"
-              >
-                <span className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-400 to-rose-400 drop-shadow-[0_0_25px_rgba(56,189,248,0.25)]">
-                  {currentTeacher.name}
-                </span>
-                <Heart className="h-7 w-7 sm:h-9 sm:w-9 fill-rose-500 text-rose-500 group-hover:scale-110 transition-transform duration-200" />
-              </motion.button>
-
-              {/* Dynamic Subject Appreciation Banner */}
-              <p className="text-sm sm:text-base font-mono text-cyan-300 mb-5">
-                Thank you for inspiring us through <strong className="font-bold underline decoration-cyan-500/40 underline-offset-4">{currentTeacher.subject}</strong>.
-              </p>
-
-              {/* Subtitle */}
-              <p className="text-lg sm:text-2xl font-medium text-slate-200 max-w-2xl text-balance mb-3 leading-relaxed">
-                "Thank you for teaching us more than just code."
-              </p>
-
-              {/* Secondary Text */}
-              <p className="text-sm sm:text-base text-slate-400 max-w-2xl text-balance mb-9 leading-relaxed">
-                You helped turn curiosity into knowledge, ideas into projects, and students into creators.
-              </p>
-
-              {/* CTA Action Buttons */}
-              <div className="flex flex-wrap items-center justify-center gap-3.5 w-full sm:w-auto">
+              {/* Card Actions: Edit, Reset, Copy Message, Copy Link, Share */}
+              <div className="flex flex-wrap items-center gap-1.5">
                 <button
                   type="button"
-                  onClick={() => scrollToSection('journey')}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-blue-600 px-7 py-3.5 font-semibold text-white shadow-[0_0_25px_rgba(56,189,248,0.25)] hover:shadow-[0_0_35px_rgba(56,189,248,0.4)] hover:brightness-110 active:scale-98 transition-all whitespace-nowrap"
+                  onClick={() => {
+                    sounds.playClick();
+                    onOpenPersonalizer();
+                  }}
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-800/70 px-2.5 py-1.5 text-xs font-medium text-slate-200 hover:border-cyan-400 hover:text-white transition-colors"
+                  title="Edit Personalized Tribute"
                 >
-                  <span>Begin the Journey</span>
-                  <ArrowDown className="h-4 w-4 animate-bounce" />
+                  <Edit3 className="h-3 w-3 text-cyan-400" />
+                  <span>Edit</span>
                 </button>
 
                 <button
                   type="button"
-                  onClick={() => scrollToSection('teacher')}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900/80 px-6 py-3.5 font-semibold text-slate-200 hover:bg-slate-800 hover:border-slate-600 hover:text-white transition-all backdrop-blur-md whitespace-nowrap"
+                  onClick={() => {
+                    sounds.playClick();
+                    onResetTribute();
+                  }}
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-800/70 px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:border-slate-600 hover:text-white transition-colors"
+                  title="Reset Tribute"
                 >
-                  <UserCheck className="h-4 w-4 text-cyan-400" />
-                  <span>Meet Our Teacher</span>
+                  <RotateCcw className="h-3 w-3" />
+                  <span>Reset</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleCopyMessage}
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-800/70 px-2.5 py-1.5 text-xs font-medium text-slate-200 hover:border-cyan-400 hover:text-white transition-colors"
+                  title="Copy Tribute Message"
+                >
+                  {copiedMessage ? (
+                    <>
+                      <Check className="h-3 w-3 text-emerald-400" />
+                      <span>Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3 w-3 text-cyan-400" />
+                      <span>Copy Message</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-800/70 px-2.5 py-1.5 text-xs font-medium text-slate-200 hover:border-cyan-400 hover:text-white transition-colors"
+                  title="Copy Website Link"
+                >
+                  {copiedLink ? (
+                    <>
+                      <Check className="h-3 w-3 text-emerald-400" />
+                      <span>Link Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Link2 className="h-3 w-3 text-indigo-400" />
+                      <span>Copy Link</span>
+                    </>
+                  )}
                 </button>
 
                 <button
                   type="button"
                   onClick={handleShareTribute}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-950/40 px-5 py-3.5 font-semibold text-cyan-200 hover:bg-cyan-900/50 hover:border-cyan-400 transition-all backdrop-blur-md whitespace-nowrap"
-                  title="Share this personalized tribute"
+                  className="inline-flex items-center gap-1 rounded-lg bg-cyan-500/20 border border-cyan-500/40 px-3 py-1.5 text-xs font-semibold text-cyan-200 hover:bg-cyan-500/30 transition-colors"
+                  title="Share Tribute"
                 >
-                  {shareCopied ? (
-                    <>
-                      <Check className="h-4 w-4 text-emerald-400" />
-                      <span>Link Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Share2 className="h-4 w-4 text-cyan-400" />
-                      <span>Share Tribute</span>
-                    </>
-                  )}
+                  <Share2 className="h-3 w-3 text-cyan-400" />
+                  <span>Share</span>
                 </button>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Subtle bottom scroll indicator */}
-      {introPhase === 'ready' && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 text-slate-400 text-xs font-mono"
-        >
-          <span>scroll to explore</span>
-          <ArrowDown className="h-3.5 w-3.5 animate-bounce" />
+            </div>
+          </motion.div>
         </motion.div>
-      )}
+      </div>
     </section>
   );
 };

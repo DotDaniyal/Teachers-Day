@@ -11,6 +11,7 @@ import { Navbar } from './components/Navbar';
 import { CursorGlow } from './components/CursorGlow';
 import { ScrollProgress } from './components/ScrollProgress';
 import { StarParticlesBackground } from './components/StarParticlesBackground';
+import { CinematicIntro } from './components/CinematicIntro';
 import { Hero } from './components/Hero';
 import { BehindEveryDev } from './components/BehindEveryDev';
 import { TeacherSpotlight } from './components/TeacherSpotlight';
@@ -113,6 +114,7 @@ export default function App() {
   });
 
   // Modals & Panels state
+  const [showIntro, setShowIntro] = useState(true);
   const [personalizerOpen, setPersonalizerOpen] = useState(false);
   const [customizerDrawerOpen, setCustomizerDrawerOpen] = useState(false);
   const [easterEggOpen, setEasterEggOpen] = useState(false);
@@ -175,7 +177,8 @@ export default function App() {
     name: string,
     subject: string,
     photo?: string,
-    studentName?: string
+    studentName?: string,
+    customNote?: string
   ) => {
     const updated = {
       ...currentTeacher,
@@ -184,12 +187,20 @@ export default function App() {
       ...(photo ? { photo } : {}),
     };
     handleUpdateTeacher(updated);
-    if (studentName) {
-      handleUpdateSettings({
-        ...settings,
-        studentName,
-      });
-    }
+    handleUpdateSettings({
+      ...settings,
+      studentName: studentName ?? settings.studentName,
+      customNote: customNote !== undefined ? customNote : settings.customNote,
+    });
+  };
+
+  const handleResetTribute = () => {
+    handleResetTeachers();
+    handleUpdateSettings({
+      ...settings,
+      studentName: 'Your Grateful Students',
+      customNote: '',
+    });
   };
 
   const handleUpdateSettings = (newSettings: CustomizationSettings) => {
@@ -306,6 +317,13 @@ export default function App() {
         isLightMode ? 'theme-light bg-slate-50 text-slate-900' : 'bg-gray-950 text-slate-100'
       }`}
     >
+      {/* Full-Screen Cinematic Opening Sequence */}
+      <CinematicIntro
+        isOpen={showIntro}
+        currentTeacher={currentTeacher}
+        onComplete={() => setShowIntro(false)}
+      />
+
       {/* Ambient Star Particles Across Entire Application */}
       {settings.particlesEnabled !== false && (
         <StarParticlesBackground themeMode={settings.themeMode || 'dark'} />
@@ -331,7 +349,11 @@ export default function App() {
         {/* SECTION 1: Cinematic Intro & Welcome Hero */}
         <Hero
           currentTeacher={currentTeacher}
+          studentName={settings.studentName}
+          customNote={settings.customNote}
           onOpenPersonalizer={() => setPersonalizerOpen(true)}
+          onResetTribute={handleResetTribute}
+          onReplayIntro={() => setShowIntro(true)}
         />
 
         {/* SECTION 2: Behind Every Developer Is a Teacher */}
@@ -416,6 +438,7 @@ export default function App() {
         currentTeacher={currentTeacher}
         onSelectTeacher={handleSelectTeacher}
         defaultStudentName={settings.studentName}
+        defaultCustomNote={settings.customNote}
       />
 
       {/* Developer Customization Drawer */}

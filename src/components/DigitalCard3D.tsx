@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Mail, Heart, Lock, Unlock, Share2, Check, Sparkles } from 'lucide-react';
+import { Mail, Heart, Lock, Unlock, Share2, Check, Sparkles, Copy, Link2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Teacher } from '../types';
 import { sounds } from '../utils/audio';
@@ -20,8 +20,10 @@ export const DigitalCard3D: React.FC<DigitalCard3DProps> = ({
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (window.matchMedia('(pointer: coarse)').matches) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
@@ -188,11 +190,14 @@ export const DigitalCard3D: React.FC<DigitalCard3DProps> = ({
                   </p>
                 </div>
 
-                <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-4">
+                <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-4 space-y-1.5">
                   <p className="text-sm font-semibold text-cyan-300 italic">
-                    "Thank you for helping us write the first lines of our future."
+                    &ldquo;Behind every confident student is someone who believed in them first.&rdquo;
                   </p>
-                  <div className="mt-3 text-right">
+                  <p className="text-xs text-slate-300 italic">
+                    &ldquo;Thank you for helping us write the first lines of our future.&rdquo;
+                  </p>
+                  <div className="mt-2 pt-2 border-t border-slate-800/80 text-right">
                     <span className="text-xs font-mono text-slate-400">
                       With endless respect and gratitude,
                     </span>
@@ -202,21 +207,68 @@ export const DigitalCard3D: React.FC<DigitalCard3DProps> = ({
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                <div className="flex flex-wrap items-center justify-center gap-2.5 pt-2">
                   <button
                     type="button"
                     onClick={handleShareCard}
-                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 px-5 py-2.5 text-xs font-bold text-white shadow-md hover:opacity-95 transition-all"
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 px-4 py-2.5 text-xs font-bold text-white shadow-md hover:opacity-95 transition-all"
+                  >
+                    <Share2 className="h-3.5 w-3.5" />
+                    <span>Share Card</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      sounds.playClick();
+                      try {
+                        await navigator.clipboard.writeText(
+                          `Dear ${currentTeacher.name},\n\n${noteContent}\n\n"Behind every confident student is someone who believed in them first."\n— ${studentName || 'Your Grateful Students'}`
+                        );
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2200);
+                      } catch {
+                        // ignore
+                      }
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800/80 px-3.5 py-2.5 text-xs font-semibold text-slate-200 hover:bg-slate-700 hover:text-white transition-colors"
                   >
                     {copied ? (
                       <>
-                        <Check className="h-3.5 w-3.5" />
-                        <span>Card Message Copied!</span>
+                        <Check className="h-3.5 w-3.5 text-emerald-400" />
+                        <span>Message Copied!</span>
                       </>
                     ) : (
                       <>
-                        <Share2 className="h-3.5 w-3.5" />
-                        <span>Share Card</span>
+                        <Copy className="h-3.5 w-3.5 text-cyan-400" />
+                        <span>Copy Message</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      sounds.playClick();
+                      try {
+                        await navigator.clipboard.writeText(window.location.href);
+                        setCopiedLink(true);
+                        setTimeout(() => setCopiedLink(false), 2200);
+                      } catch {
+                        // ignore
+                      }
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800/80 px-3.5 py-2.5 text-xs font-semibold text-slate-200 hover:bg-slate-700 hover:text-white transition-colors"
+                  >
+                    {copiedLink ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 text-emerald-400" />
+                        <span>Link Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Link2 className="h-3.5 w-3.5 text-indigo-400" />
+                        <span>Copy Link</span>
                       </>
                     )}
                   </button>
@@ -224,10 +276,10 @@ export const DigitalCard3D: React.FC<DigitalCard3DProps> = ({
                   <button
                     type="button"
                     onClick={handleToggleOpen}
-                    className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-5 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800/80 px-3.5 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
                   >
                     <Lock className="h-3.5 w-3.5" />
-                    <span>Close Card</span>
+                    <span>Close</span>
                   </button>
                 </div>
               </motion.div>

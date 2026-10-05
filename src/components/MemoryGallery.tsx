@@ -26,6 +26,7 @@ export const MemoryGallery: React.FC<MemoryGalleryProps> = ({
   const [title, setTitle] = useState('');
   const [caption, setCaption] = useState('');
   const [dateLabel, setDateLabel] = useState('Class of 2026');
+  const [teacherName, setTeacherName] = useState(currentTeacher.name);
   const [newPhoto, setNewPhoto] = useState<string | undefined>(undefined);
 
   const newPhotoInputRef = useRef<HTMLInputElement | null>(null);
@@ -61,8 +62,9 @@ export const MemoryGallery: React.FC<MemoryGalleryProps> = ({
     sounds.playChime();
     onAddPolaroid({
       title: title.trim(),
-      caption: caption.trim() || `A special classroom memory with ${currentTeacher.name}.`,
+      caption: caption.trim() || `A special classroom memory with ${teacherName.trim() || currentTeacher.name}.`,
       dateLabel: dateLabel.trim() || '2026',
+      teacherName: teacherName.trim() || currentTeacher.name,
       imageUrl: newPhoto,
       placeholderTheme: 'from-cyan-500/20 via-indigo-500/15 to-slate-900',
       rotation: (Math.random() - 0.5) * 4,
@@ -74,7 +76,7 @@ export const MemoryGallery: React.FC<MemoryGalleryProps> = ({
   };
 
   return (
-    <section className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section id="memories" className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-14 gap-6">
         <div className="max-w-2xl">
@@ -133,7 +135,7 @@ export const MemoryGallery: React.FC<MemoryGalleryProps> = ({
               <h3 className="text-lg font-bold font-display text-white">
                 Create a Memory Polaroid
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-medium uppercase tracking-wider text-slate-300 mb-1">
                     Memory Title
@@ -149,7 +151,19 @@ export const MemoryGallery: React.FC<MemoryGalleryProps> = ({
                 </div>
                 <div>
                   <label className="block text-xs font-medium uppercase tracking-wider text-slate-300 mb-1">
-                    Date / Occasion
+                    Optional Teacher Name
+                  </label>
+                  <input
+                    type="text"
+                    value={teacherName}
+                    onChange={(e) => setTeacherName(e.target.value)}
+                    placeholder="e.g. Sir Zuhaib"
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium uppercase tracking-wider text-slate-300 mb-1">
+                    Optional Date
                   </label>
                   <input
                     type="text"
@@ -276,7 +290,10 @@ export const MemoryGallery: React.FC<MemoryGalleryProps> = ({
               {/* Polaroid Caption Area */}
               <div className="px-1">
                 <div className="flex items-center justify-between text-[11px] font-mono text-cyan-400 mb-1">
-                  <span>{item.dateLabel}</span>
+                  <span className="truncate">
+                    {item.teacherName ? `${item.teacherName} · ` : ''}
+                    {item.dateLabel}
+                  </span>
                   {polaroids.length > 1 && (
                     <button
                       type="button"
